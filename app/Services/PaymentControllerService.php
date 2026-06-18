@@ -30,9 +30,23 @@ class PaymentControllerService
         return $messages[0] ?? 'Data pembayaran tidak valid.';
     }
 
+    public function ensureExists(?Payment $payment): ?array
+    {
+        if ($payment) {
+            return null;
+        }
+
+        return [
+            'message' => 'Pembayaran tidak ditemukan',
+            'status' => 404,
+        ];
+    }
+
     public function storeProof(Payment $payment, UploadedFile $file): array
     {
         $filename = 'payment_proof_' . $payment->id . '_' . Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $disk = Storage::disk('private');
+        $disk->makeDirectory('payment_proofs');
         $path = $file->storeAs('payment_proofs', $filename, 'private');
 
         $payment->update([
@@ -42,7 +56,7 @@ class PaymentControllerService
         return [
             'path' => $path,
             'filename' => $filename,
-            'url' => Storage::url($path),
+            'url' => null,
         ];
     }
 }

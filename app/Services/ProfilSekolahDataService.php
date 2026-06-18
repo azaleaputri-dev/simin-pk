@@ -10,7 +10,14 @@ class ProfilSekolahDataService
 {
     public function validate(Request $request, ?ProfilSekolah $profilSekolah = null): array
     {
-        $validated = $request->validate([
+        $validated = $request->validate($this->rules($request, $profilSekolah));
+
+        return $this->normalize($validated);
+    }
+
+    public function rules(Request $request, ?ProfilSekolah $profilSekolah = null): array
+    {
+        return [
             'nama_sekolah' => 'required|string|max:255',
             'npsn' => ['nullable', 'string', 'max:20', Rule::unique('profil_sekolahs', 'npsn')->ignore($profilSekolah?->id)],
             'alamat' => 'nullable|string',
@@ -30,8 +37,11 @@ class ProfilSekolahDataService
             'jumlah_siswa' => 'nullable|integer|min:0',
             'fasilitas' => 'nullable|json',
             'deskripsi' => 'nullable|string',
-        ]);
+        ];
+    }
 
+    public function normalize(array $validated): array
+    {
         if (isset($validated['fasilitas']) && is_string($validated['fasilitas'])) {
             $validated['fasilitas'] = json_decode($validated['fasilitas'], true);
 

@@ -9,9 +9,12 @@ use App\Models\Invoice;
 use App\Services\FinanceFormOptionsService;
 use App\Services\InvoiceManagementService;
 use App\Services\InvoiceAccessService;
+use App\Services\InvoiceQueryService;
 use App\Services\NumberGeneratorService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class InvoiceController extends Controller
 {
@@ -21,25 +24,26 @@ class InvoiceController extends Controller
         protected NumberGeneratorService $numberGenerator,
         protected InvoiceManagementService $invoiceManagementService,
         protected FinanceFormOptionsService $formOptionsService,
-        protected InvoiceAccessService $invoiceAccessService
+        protected InvoiceAccessService $invoiceAccessService,
+        protected InvoiceQueryService $invoiceQueryService
     ) {
     }
 
-    public function index()
+    public function index(): View
     {
-        $invoices = Invoice::with(['student', 'guardian', 'academicYear'])->latest()->get();
+        $invoices = $this->invoiceQueryService->listForIndex();
 
         return view('invoices.index', compact('invoices'));
     }
 
-    public function create()
+    public function create(): View
     {
         return view('invoices.create', $this->formOptionsService->invoiceFormData([
             'invoiceNumber' => $this->numberGenerator->nextInvoiceNumber(),
         ]));
     }
 
-    public function store(StoreInvoiceRequest $request)
+    public function store(StoreInvoiceRequest $request): RedirectResponse
     {
         $this->invoiceManagementService->createSingleItemInvoice(
             $request->validated()
@@ -48,20 +52,20 @@ class InvoiceController extends Controller
         return redirect()->route('invoices.index')->with('success', 'Invoice berhasil dibuat.');
     }
 
-    public function show(Invoice $invoice)
+    public function show(Invoice $invoice): View
     {
-        $invoice->load(['student', 'guardian', 'academicYear', 'items.feeType', 'payments']);
+        $invoice = $this->invoiceQueryService->loadForShow($invoice);
 
         return view('invoices.show', compact('invoice'));
     }
 
-    public function edit(Invoice $invoice)
+    public function edit(Invoice $invoice): View|RedirectResponse
     {
         if ($invoice->isPaid()) {
             return redirect()->route('invoices.index')->with('error', 'Invoice PAID tidak dapat diubah.');
         }
 
-        $invoice->load('items');
+        $invoice = $this->invoiceQueryService->loadForEdit($invoice);
 
         return view('invoices.edit', $this->formOptionsService->invoiceFormData([
             'invoice' => $invoice,
@@ -69,7 +73,7 @@ class InvoiceController extends Controller
         ]));
     }
 
-    public function update(UpdateInvoiceRequest $request, Invoice $invoice)
+    public function update(UpdateInvoiceRequest $request, Invoice $invoice): RedirectResponse
     {
         if ($guard = $this->invoiceAccessService->ensureEditable($invoice)) {
             return redirect()->route('invoices.index')->with('error', $guard['message']);
@@ -83,7 +87,7 @@ class InvoiceController extends Controller
         return redirect()->route('invoices.show', $invoice)->with('success', 'Invoice berhasil diperbarui.');
     }
 
-    public function destroy(Invoice $invoice)
+    public function destroy(Invoice $invoice): RedirectResponse
     {
         if ($guard = $this->invoiceAccessService->ensureDeletable($invoice)) {
             return redirect()->route('invoices.index')->with('error', $guard['message']);
@@ -96,14 +100,14 @@ class InvoiceController extends Controller
 
     public function apiIndex(Request $request): JsonResponse
     {
-        $invoices = Invoice::with(['student', 'guardian', 'academicYear'])->latest()->get();
+        $invoices = $this->invoiceQueryService->listForIndex();
 
         return $this->successJson('Data invoice berhasil diambil', $invoices);
     }
 
     public function apiShow(Request $request, $id): JsonResponse
     {
-        $invoice = Invoice::with(['student', 'guardian', 'academicYear', 'items.feeType', 'payments'])->find($id);
+        $invoice = $this->invoiceQueryService->findForShow($id);
 
         if (! $invoice) {
             return $this->errorJson('Invoice tidak ditemukan', 404);
@@ -123,7 +127,7 @@ class InvoiceController extends Controller
 
     public function apiUpdate(UpdateInvoiceRequest $request, $id): JsonResponse
     {
-        $invoice = Invoice::find($id);
+        $invoice = $this->invoiceQueryService->findById($id);
 
         if (! $invoice) {
             return $this->errorJson('Invoice tidak ditemukan', 404);
@@ -143,7 +147,7 @@ class InvoiceController extends Controller
 
     public function apiDestroy($id): JsonResponse
     {
-        $invoice = Invoice::find($id);
+        $invoice = $this->invoiceQueryService->findById($id);
 
         if (! $invoice) {
             return $this->errorJson('Invoice tidak ditemukan', 404);

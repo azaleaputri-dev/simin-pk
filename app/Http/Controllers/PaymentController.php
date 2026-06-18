@@ -11,10 +11,13 @@ use App\Services\FinanceFormOptionsService;
 use App\Services\NumberGeneratorService;
 use App\Services\PaymentApprovalService;
 use App\Services\PaymentControllerService;
+use App\Services\PaymentQueryService;
 use App\Services\PaymentSubmissionService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class PaymentController extends Controller
 {
@@ -25,25 +28,26 @@ class PaymentController extends Controller
         protected PaymentApprovalService $paymentApprovalService,
         protected PaymentSubmissionService $paymentSubmissionService,
         protected FinanceFormOptionsService $formOptionsService,
-        protected PaymentControllerService $paymentControllerService
+        protected PaymentControllerService $paymentControllerService,
+        protected PaymentQueryService $paymentQueryService
     ) {
     }
 
-    public function index()
+    public function index(): View
     {
-        $payments = Payment::with('invoice.student')->latest()->get();
+        $payments = $this->paymentQueryService->listForHistory();
 
         return view('payments.index', compact('payments'));
     }
 
-    public function create()
+    public function create(): View
     {
         return view('payments.create', $this->formOptionsService->paymentCreateData(
             $this->numberGenerator->nextPaymentNumber()
         ));
     }
 
-    public function store(StorePaymentRequest $request)
+    public function store(StorePaymentRequest $request): RedirectResponse
     {
         try {
             $this->paymentSubmissionService->submit($request->validated());
@@ -54,14 +58,14 @@ class PaymentController extends Controller
         return redirect()->route('payments.index')->with('success', 'Pembayaran berhasil dibuat.');
     }
 
-    public function show(Payment $payment)
+    public function show(Payment $payment): View
     {
-        $payment->load('invoice.student');
+        $payment = $this->paymentQueryService->loadForShow($payment);
 
         return view('payments.show', compact('payment'));
     }
 
-    public function approve(Request $request, Payment $payment)
+    public function approve(Request $request, Payment $payment): RedirectResponse
     {
         if ($guard = $this->paymentControllerService->ensurePending($payment, 'Hanya pembayaran PENDING yang bisa disetujui.')) {
             return back()->with('error', $guard['message']);
@@ -72,7 +76,7 @@ class PaymentController extends Controller
         return redirect()->route('payments.show', $payment)->with('success', 'Pembayaran berhasil disetujui.');
     }
 
-    public function reject(RejectPaymentRequest $request, Payment $payment)
+    public function reject(RejectPaymentRequest $request, Payment $payment): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -98,7 +102,7 @@ class PaymentController extends Controller
 
     public function apiUploadProof(ApiUploadProofRequest $request): JsonResponse
     {
-        $payment = Payment::findOrFail($request->input('payment_id'));
+        $payment = $this->paymentQueryService->findByIdOrFail($request->input('payment_id'));
 
         if ($guard = $this->paymentControllerService->ensurePending($payment, 'Hanya pembayaran PENDING yang bisa diupload bukti.', true)) {
             return $this->errorJson($guard['message'], $guard['status']);
@@ -112,17 +116,17 @@ class PaymentController extends Controller
 
     public function apiHistory(Request $request): JsonResponse
     {
-        $payments = Payment::with('invoice.student')->latest()->get();
+        $payments = $this->paymentQueryService->listForHistory();
 
         return $this->successJson('Riwayat pembayaran berhasil diambil', $payments);
     }
 
     public function apiApprove(Request $request, $id): JsonResponse
     {
-        $payment = Payment::find($id);
+        $payment = $this->paymentQueryService->findById($id);
 
-        if (! $payment) {
-            return $this->errorJson('Pembayaran tidak ditemukan', 404);
+        if ($guard = $this->paymentControllerService->ensureExists($payment)) {
+            return $this->errorJson($guard['message'], $guard['status']);
         }
 
         if ($guard = $this->paymentControllerService->ensurePending($payment, 'Hanya pembayaran PENDING yang bisa disetujui.', true)) {
@@ -136,10 +140,10 @@ class PaymentController extends Controller
 
     public function apiReject(RejectPaymentRequest $request, $id): JsonResponse
     {
-        $payment = Payment::find($id);
+        $payment = $this->paymentQueryService->findById($id);
 
-        if (! $payment) {
-            return $this->errorJson('Pembayaran tidak ditemukan', 404);
+        if ($guard = $this->paymentControllerService->ensureExists($payment)) {
+            return $this->errorJson($guard['message'], $guard['status']);
         }
 
         if ($guard = $this->paymentControllerService->ensurePending($payment, 'Hanya pembayaran PENDING yang bisa ditolak.', true)) {

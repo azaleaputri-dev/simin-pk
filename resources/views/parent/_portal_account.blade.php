@@ -1,5 +1,5 @@
-<div class="col-12" id="berkas-ppdb">
-    <div class="border rounded-4 p-4 bg-white">
+<div class="col-12" id="ringkasan-akun">
+    <div class="surface-card">
         <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
             <div>
                 <div class="section-label mb-2">Akun Portal</div>
@@ -14,19 +14,19 @@
         </div>
         <div class="row g-3">
             <div class="col-md-4">
-                <div class="border rounded-3 p-3 h-100">
+                <div class="list-surface-item h-100 mb-0">
                     <div class="small text-muted">Nama Akun</div>
                     <div class="fw-semibold">{{ $guardian?->name ?? '-' }}</div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="border rounded-3 p-3 h-100">
+                <div class="list-surface-item h-100 mb-0">
                     <div class="small text-muted">Email</div>
                     <div class="fw-semibold">{{ $guardian?->email ?? '-' }}</div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="border rounded-3 p-3 h-100">
+                <div class="list-surface-item h-100 mb-0">
                     <div class="small text-muted">No. HP</div>
                     <div class="fw-semibold">{{ $guardian?->phone ?? '-' }}</div>
                 </div>

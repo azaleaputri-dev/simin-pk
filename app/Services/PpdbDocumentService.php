@@ -14,18 +14,20 @@ class PpdbDocumentService
     public function storePortalDocument(PPDB $ppdb, string $documentType, UploadedFile $file): array
     {
         $filename = $documentType . '-' . Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $disk = Storage::disk('public');
+        $disk->makeDirectory('ppdb/documents');
         $path = $file->storeAs('ppdb/documents', $filename, 'public');
         $documents = $ppdb->berkas ?? [];
 
         if (isset($documents[$documentType]['path'])) {
-            Storage::disk('public')->delete($documents[$documentType]['path']);
+            $disk->delete($documents[$documentType]['path']);
         }
 
         $documents[$documentType] = [
             'path' => $path,
             'filename' => $filename,
             'original_name' => $file->getClientOriginalName(),
-            'url' => Storage::disk('public')->url($path),
+            'url' => $disk->url($path),
             'uploaded_at' => now()->toDateTimeString(),
         ];
 
@@ -36,6 +38,7 @@ class PpdbDocumentService
 
     public function deletePortalDocument(PPDB $ppdb, string $documentType): bool
     {
+        $disk = Storage::disk('public');
         $documents = $ppdb->berkas ?? [];
 
         if (! isset($documents[$documentType])) {
@@ -43,7 +46,7 @@ class PpdbDocumentService
         }
 
         if (! empty($documents[$documentType]['path'])) {
-            Storage::disk('public')->delete($documents[$documentType]['path']);
+            $disk->delete($documents[$documentType]['path']);
         }
 
         unset($documents[$documentType]);
@@ -55,12 +58,14 @@ class PpdbDocumentService
     public function storeApiDocument(UploadedFile $file): array
     {
         $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $disk = Storage::disk('private');
+        $disk->makeDirectory('ppdb/documents');
         $path = $file->storeAs('ppdb/documents', $filename, 'private');
 
         return [
             'path' => $path,
             'filename' => $filename,
-            'url' => Storage::url($path),
+            'url' => null,
         ];
     }
 }

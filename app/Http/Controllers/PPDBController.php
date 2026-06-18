@@ -10,12 +10,13 @@ use App\Http\Requests\PPDB\StoreAdminPpdbRequest;
 use App\Http\Requests\PPDB\UpdateAdminPpdbRequest;
 use App\Models\PPDB;
 use App\Services\PpdbDocumentService;
+use App\Services\PpdbPortalService;
 use App\Services\PpdbRegistrationService;
 use App\Services\PpdbValidationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class PPDBController extends Controller
 {
@@ -24,41 +25,33 @@ class PPDBController extends Controller
     public function __construct(
         protected PpdbRegistrationService $registrationService,
         protected PpdbValidationService $validationService,
-        protected PpdbDocumentService $documentService
+        protected PpdbDocumentService $documentService,
+        protected PpdbPortalService $portalService
     ) {
     }
 
-    public function register()
+    public function register(): View
     {
-        $user = Auth::user();
-        $guardian = $user?->guardian;
-        $draftPpdb = new PPDB([
-            'nama_orang_tua' => $guardian?->name ?? $user?->name,
-            'email_orang_tua' => $guardian?->email ?? $user?->email,
-            'no_hp_orang_tua' => $guardian?->phone,
-            'alamat' => $guardian?->address,
-        ]);
+        $draftPpdb = $this->portalService->draftFor(request()->user());
 
         return view('ppdb.register', compact('draftPpdb'));
     }
 
-    public function submit(PublicPpdbRequest $request)
+    public function submit(PublicPpdbRequest $request): RedirectResponse
     {
         $this->createPublicPpdb($request);
 
-        $redirectRoute = $request->user()?->isGuardianUser() ? 'parent.portal' : 'ppdb.register';
-
-        return redirect()->route($redirectRoute)
+        return redirect()->route($this->portalService->submitRedirectRoute($request->user()))
             ->with('success', 'Pendaftaran PPDB berhasil dikirim. Tim admin akan meninjau data Anda.');
     }
 
     public function uploadPortalDocument(PortalDocumentUploadRequest $request, PPDB $ppdb): RedirectResponse
     {
-        $this->authorizePortalPpdbAccess($request, $ppdb);
+        $this->portalService->authorizeAccess($request->user(), $ppdb);
 
-        if (! $ppdb->canManagePortalDocuments()) {
+        if ($message = $this->portalService->cannotManageDocumentMessage($ppdb)) {
             return redirect()->route('parent.portal')
-                ->with('error', 'Upload berkas dikunci karena status PPDB sudah final.');
+                ->with('error', $message);
         }
 
         $validated = $request->validated();
@@ -75,15 +68,15 @@ class PPDBController extends Controller
 
     public function destroyPortalDocument(Request $request, PPDB $ppdb, string $documentType): RedirectResponse
     {
-        $this->authorizePortalPpdbAccess($request, $ppdb);
+        $this->portalService->authorizeAccess($request->user(), $ppdb);
 
         if (! in_array($documentType, PpdbDocumentService::DOCUMENT_TYPES, true)) {
             abort(404);
         }
 
-        if (! $ppdb->canManagePortalDocuments()) {
+        if ($message = $this->portalService->cannotManageDocumentMessage($ppdb, 'delete')) {
             return redirect()->route('parent.portal')
-                ->with('error', 'Berkas tidak bisa dihapus karena status PPDB sudah final.');
+                ->with('error', $message);
         }
 
         if (! $this->documentService->deletePortalDocument($ppdb, $documentType)) {
@@ -95,19 +88,19 @@ class PPDBController extends Controller
             ->with('success', 'Berkas ' . strtoupper($documentType) . ' berhasil dihapus.');
     }
 
-    public function index()
+    public function index(): View
     {
         $ppdbs = PPDB::with('student')->latest()->get();
 
         return view('ppdb.index', compact('ppdbs'));
     }
 
-    public function create()
+    public function create(): View
     {
         return view('ppdb.create');
     }
 
-    public function store(StoreAdminPpdbRequest $request)
+    public function store(StoreAdminPpdbRequest $request): RedirectResponse
     {
         $this->registrationService->createAdmin(
             $this->validationService->normalize($request->validated())
@@ -117,19 +110,19 @@ class PPDBController extends Controller
             ->with('success', 'Pendaftaran PPDB berhasil ditambahkan.');
     }
 
-    public function show(PPDB $ppdb)
+    public function show(PPDB $ppdb): View
     {
         $ppdb->load('student');
 
         return view('ppdb.show', compact('ppdb'));
     }
 
-    public function edit(PPDB $ppdb)
+    public function edit(PPDB $ppdb): View
     {
         return view('ppdb.edit', compact('ppdb'));
     }
 
-    public function update(UpdateAdminPpdbRequest $request, PPDB $ppdb)
+    public function update(UpdateAdminPpdbRequest $request, PPDB $ppdb): RedirectResponse
     {
         $this->registrationService->updateAdmin(
             $ppdb,
@@ -140,7 +133,7 @@ class PPDBController extends Controller
             ->with('success', 'Pendaftaran PPDB berhasil diperbarui.');
     }
 
-    public function destroy(PPDB $ppdb)
+    public function destroy(PPDB $ppdb): RedirectResponse
     {
         $ppdb->delete();
 
@@ -181,16 +174,6 @@ class PPDBController extends Controller
         );
     }
 
-    protected function authorizePortalPpdbAccess(Request $request, PPDB $ppdb): void
-    {
-        $user = $request->user();
-
-        abort_unless(
-            $user && ($ppdb->user_id === $user->id || $ppdb->email_orang_tua === $user->email),
-            403
-        );
-    }
-
     protected function createPublicPpdb(PublicPpdbRequest $request): PPDB
     {
         return $this->registrationService->createPublic(
@@ -198,5 +181,4 @@ class PPDBController extends Controller
             $request->user()
         );
     }
-
 }

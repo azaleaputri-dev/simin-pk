@@ -11,7 +11,7 @@ use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class AuthController extends Controller
 {
@@ -21,12 +21,12 @@ class AuthController extends Controller
     {
     }
 
-    public function showLogin()
+    public function showLogin(): View
     {
         return view('auth.login');
     }
 
-    public function showRegister()
+    public function showRegister(): View
     {
         return view('auth.register');
     }
@@ -59,10 +59,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $this->authService->logout($request);
 
         return redirect()->route('home')->with('success', 'Anda berhasil logout.');
     }
@@ -71,7 +68,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        return redirect()->intended(route($user->redirectRoute()));
+        return redirect()->intended(route($this->authService->redirectRouteFor($user)));
     }
 
     // API Methods

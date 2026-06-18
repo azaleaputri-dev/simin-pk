@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Guardian;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -43,13 +44,17 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function guardian()
+    public function guardian(): HasOne
     {
         return $this->hasOne(Guardian::class);
     }
 
     public function isGuardianUser(): bool
     {
+        if ($this->relationLoaded('guardian')) {
+            return $this->guardian !== null;
+        }
+
         return $this->guardian()->exists();
     }
 

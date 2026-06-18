@@ -1,5 +1,5 @@
 <div class="col-12">
-    <div class="border rounded-4 p-4 bg-white">
+    <div class="surface-card">
         <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
             <div>
                 <div class="section-label mb-2">Berkas PPDB</div>

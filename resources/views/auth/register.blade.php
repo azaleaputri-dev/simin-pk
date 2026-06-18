@@ -5,113 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register Akun | SIMIN-PK</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --ink: #18353b;
-            --brand: #1e6c7d;
-            --brand-dark: #12343b;
-            --accent: #e2a64b;
-        }
-
-        body {
-            min-height: 100vh;
-            background:
-                radial-gradient(circle at top left, rgba(226, 166, 75, 0.18), transparent 24%),
-                linear-gradient(180deg, #fffaf2 0%, #f5ede0 100%);
-            color: var(--ink);
-        }
-
-        .register-card {
-            background: rgba(255, 255, 255, 0.94);
-            border: 1px solid rgba(24, 53, 59, 0.08);
-            border-radius: 1.5rem;
-            box-shadow: 0 24px 50px rgba(18, 52, 59, 0.08);
-        }
-
-        .register-hero {
-            background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand) 58%, #4c9cad 100%);
-            color: white;
-            border-radius: 1.25rem;
-            height: 100%;
-        }
-
-        .btn-primary {
-            background: var(--brand);
-            border-color: var(--brand);
-        }
-
-        .section-label {
-            color: var(--accent);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-size: 0.78rem;
-        }
-
-        .password-toggle {
-            min-width: 92px;
-        }
-
-        .password-checklist {
-            display: grid;
-            gap: 0.35rem;
-            margin-top: 0.85rem;
-            padding: 0.85rem 1rem;
-            border-radius: 1rem;
-            background: rgba(24, 53, 59, 0.05);
-            border: 1px solid rgba(24, 53, 59, 0.08);
-        }
-
-        .password-check-item {
-            font-size: 0.9rem;
-            color: rgba(24, 53, 59, 0.72);
-        }
-
-        .password-check-item.is-valid {
-            color: #198754;
-            font-weight: 600;
-        }
-
-        .password-match-message {
-            font-size: 0.9rem;
-            margin-top: 0.65rem;
-            color: rgba(24, 53, 59, 0.72);
-        }
-
-        .password-match-message.is-valid {
-            color: #198754;
-            font-weight: 600;
-        }
-
-        .password-match-message.is-invalid {
-            color: #dc3545;
-            font-weight: 600;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ asset('css/auth.css') }}" rel="stylesheet">
 </head>
-<body class="d-flex align-items-center py-4">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-xl-10">
-                <div class="register-card p-3 p-lg-4">
-                    <div class="row g-4 align-items-stretch">
-                        <div class="col-lg-6">
-                            <div class="register-hero p-4 p-lg-5 d-flex flex-column justify-content-between">
-                                <div>
-                                    <div class="section-label mb-3">Langkah 1</div>
-                                    <h1 class="display-6 fw-bold mb-3">Buat akun orang tua/user lebih dulu.</h1>
-                                    <p class="mb-0 opacity-75">Setelah akun aktif, Anda akan masuk ke portal user untuk lanjut mengisi formulir PPDB dari dalam sistem.</p>
+<body>
+    <header class="auth-topbar">
+        <div class="container-fluid px-0">
+            <nav class="navbar auth-topnav">
+                <a class="auth-brand" href="{{ route('home') }}">
+                    <span class="auth-brand-icon"><i class="bi bi-mortarboard-fill"></i></span>
+                    <span>
+                        SIMIN-PK
+                        <small>Layanan informasi sekolah</small>
+                    </span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="auth-page">
+        <section class="auth-hero auth-hero-register">
+            <div class="container-fluid px-0">
+                <div class="row g-0 auth-shell">
+                    <div class="col-lg-6">
+                        <div class="auth-hero-panel">
+                            <div class="auth-hero-inner">
+                                <span class="auth-kicker">Pendaftaran Akun</span>
+                                <h1 class="auth-title">Buat akun orang tua atau wali untuk memulai proses pendaftaran.</h1>
+                                <p class="auth-description">
+                                    Akun ini akan digunakan sebagai akses resmi untuk melanjutkan pendaftaran peserta didik baru, melengkapi dokumen, dan memantau informasi lanjutan dari sekolah.
+                                </p>
+
+                                <div class="auth-feature-list">
+                                    <div><i class="bi bi-check-circle-fill"></i><span>Proses pendaftaran dimulai dari akun resmi orang tua atau wali</span></div>
+                                    <div><i class="bi bi-check-circle-fill"></i><span>Dokumen dan data pendaftaran tersimpan dalam satu akses</span></div>
+                                    <div><i class="bi bi-check-circle-fill"></i><span>Informasi lanjutan sekolah dapat dipantau secara lebih tertib</span></div>
                                 </div>
-                                <div class="mt-4 d-flex gap-2 flex-wrap">
-                                    <a href="{{ route('home') }}" class="btn btn-outline-light">Kembali ke Beranda</a>
-                                    <a href="{{ route('login') }}" class="btn btn-light">Sudah punya akun</a>
+
+                                <div class="auth-hero-actions d-flex gap-2 flex-wrap">
+                                    <a href="{{ route('home') }}" class="btn btn-outline-light rounded-pill px-4">Kembali ke Beranda</a>
+                                    <a href="{{ route('login') }}" class="btn btn-light rounded-pill px-4">Sudah Punya Akun</a>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6">
-                            <div class="p-3 p-lg-4">
-                                <h2 class="h3 mb-2">Register Akun</h2>
-                                <p class="text-muted mb-4">Isi data akun dasar dulu. Form PPDB siswa diisi setelah akun berhasil dibuat.</p>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="auth-form-panel">
+                            <div class="auth-form-inner">
+                                <div class="auth-form-header">
+                                    <div class="section-label mb-2">Register</div>
+                                    <h2 class="mb-2">Buat akun pendaftaran</h2>
+                                    <p class="text-muted mb-0">Lengkapi data dasar berikut untuk membuat akun orang tua atau wali murid.</p>
+                                </div>
 
                                 @if($errors->any())
                                     <div class="alert alert-danger">
@@ -119,7 +65,7 @@
                                     </div>
                                 @endif
 
-                                <form action="{{ route('register') }}" method="POST">
+                                <form action="{{ route('register') }}" method="POST" class="auth-form" data-emsifa-region>
                                     @csrf
                                     <div class="mb-3">
                                         <label class="form-label">Nama Lengkap</label>
@@ -133,21 +79,68 @@
                                         <label class="form-label">No. HP</label>
                                         <input type="text" name="phone" value="{{ old('phone') }}" class="form-control" required>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Alamat</label>
-                                        <textarea name="address" class="form-control" rows="3">{{ old('address') }}</textarea>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-12">
+                                            <label class="form-label">Jalan / Detail Alamat</label>
+                                            <textarea name="address_detail" class="form-control" rows="3">{{ old('address_detail') }}</textarea>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Provinsi</label>
+                                            <select
+                                                name="provinsi"
+                                                class="form-select"
+                                                data-emsifa-level="province"
+                                                data-current="{{ old('provinsi') }}"
+                                            >
+                                                <option value="">Pilih Provinsi</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Kabupaten / Kota</label>
+                                            <select
+                                                name="kabupaten"
+                                                class="form-select"
+                                                data-emsifa-level="regency"
+                                                data-current="{{ old('kabupaten') }}"
+                                                disabled
+                                            >
+                                                <option value="">Pilih Kabupaten / Kota</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Kecamatan</label>
+                                            <select
+                                                name="kecamatan"
+                                                class="form-select"
+                                                data-emsifa-level="district"
+                                                data-current="{{ old('kecamatan') }}"
+                                                disabled
+                                            >
+                                                <option value="">Pilih Kecamatan</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Kelurahan</label>
+                                            <select
+                                                name="kelurahan"
+                                                class="form-select"
+                                                data-emsifa-level="village"
+                                                data-current="{{ old('kelurahan') }}"
+                                                disabled
+                                            >
+                                                <option value="">Pilih Kelurahan</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Kode Pos</label>
+                                            <input type="text" name="kode_pos" value="{{ old('kode_pos') }}" class="form-control">
+                                        </div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Password</label>
                                         <div class="input-group">
                                             <input type="password" name="password" id="registerPassword" class="form-control" required>
                                             <button type="button" class="btn btn-outline-secondary password-toggle" data-password-target="registerPassword">Lihat</button>
-                                        </div>
-                                        <div class="password-checklist" id="passwordChecklist">
-                                            <div class="password-check-item" data-password-rule="length">Minimal 8 karakter</div>
-                                            <div class="password-check-item" data-password-rule="upper">Ada huruf besar</div>
-                                            <div class="password-check-item" data-password-rule="lower">Ada huruf kecil</div>
-                                            <div class="password-check-item" data-password-rule="number">Ada angka</div>
                                         </div>
                                     </div>
                                     <div class="mb-4">
@@ -157,16 +150,22 @@
                                             <button type="button" class="btn btn-outline-secondary password-toggle" data-password-target="registerPasswordConfirmation">Lihat</button>
                                         </div>
                                         <div class="password-match-message" id="passwordMatchMessage">Konfirmasi password harus sama dengan password di atas.</div>
+                                        <div class="password-checklist" id="passwordChecklist">
+                                            <div class="password-check-item" data-password-rule="length">Minimal 8 karakter</div>
+                                            <div class="password-check-item" data-password-rule="upper">Mengandung huruf besar</div>
+                                            <div class="password-check-item" data-password-rule="lower">Mengandung huruf kecil</div>
+                                            <div class="password-check-item" data-password-rule="number">Mengandung angka</div>
+                                        </div>
                                     </div>
-                                    <button type="submit" class="btn btn-primary w-100">Buat Akun</button>
+                                    <button type="submit" class="btn btn-primary auth-submit w-100">Buat Akun</button>
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <script>
         document.querySelectorAll('[data-password-target]').forEach(function (button) {
@@ -243,5 +242,6 @@
             updatePasswordMatch();
         }
     </script>
+    @include('components.forms._emsifa_region_script')
 </body>
 </html>

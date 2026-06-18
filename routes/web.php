@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfilSekolahController;
 use App\Http\Controllers\PPDBController;
 use App\Http\Controllers\AcademicYearController;
@@ -26,7 +27,7 @@ use App\Http\Controllers\ParentPortalController;
 |
 */
 
-Route::view('/', 'landing')->name('home');
+Route::get('/', HomeController::class)->name('home');
 
 Route::get('/ppdb/daftar', [PPDBController::class, 'register'])->name('ppdb.register');
 Route::post('/ppdb/daftar', [PPDBController::class, 'submit'])->name('ppdb.submit');

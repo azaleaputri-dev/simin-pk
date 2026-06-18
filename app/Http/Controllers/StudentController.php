@@ -2,112 +2,83 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AcademicYear;
-use App\Models\Guardian;
-use App\Models\Kelas;
+use App\Http\Controllers\Concerns\RespondsWithJson;
+use App\Http\Requests\Student\StoreStudentRequest;
+use App\Http\Requests\Student\UpdateStudentRequest;
 use App\Models\Student;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Validation\Rule;
+use App\Services\StudentFormOptionsService;
+use App\Services\StudentQueryService;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class StudentController extends Controller
 {
-    public function index()
+    use RespondsWithJson;
+
+    public function __construct(
+        protected StudentFormOptionsService $formOptionsService,
+        protected StudentQueryService $studentQueryService
+    ) {
+    }
+
+    public function index(): View
     {
-        $students = Student::with(['guardian', 'kelas', 'academicYear'])->latest()->get();
+        $students = $this->studentQueryService->listForIndex();
 
         return view('students.index', compact('students'));
     }
 
-    public function create()
+    public function create(): View
     {
-        return view('students.create', [
-            'parents' => Guardian::orderBy('name')->get(),
-            'kelas' => Kelas::orderBy('name')->get(),
-            'academicYears' => AcademicYear::orderByDesc('start_date')->get(),
-        ]);
+        return view('students.create', $this->formOptionsService->formData());
     }
 
-    public function store(Request $request)
+    public function store(StoreStudentRequest $request): RedirectResponse
     {
-        $validated = $this->validateStudent($request);
-        Student::create($validated);
+        Student::create($request->validated());
 
         return redirect()->route('students.index')->with('success', 'Data siswa berhasil ditambahkan.');
     }
 
-    public function edit(Student $student)
+    public function edit(Student $student): View
     {
-        return view('students.edit', [
+        return view('students.edit', $this->formOptionsService->formData([
             'student' => $student,
-            'parents' => Guardian::orderBy('name')->get(),
-            'kelas' => Kelas::orderBy('name')->get(),
-            'academicYears' => AcademicYear::orderByDesc('start_date')->get(),
-        ]);
+        ]));
     }
 
-    public function update(Request $request, Student $student)
+    public function update(UpdateStudentRequest $request, Student $student): RedirectResponse
     {
-        $validated = $this->validateStudent($request, $student);
-        $student->update($validated);
+        $student->update($request->validated());
 
         return redirect()->route('students.index')->with('success', 'Data siswa berhasil diperbarui.');
     }
 
-    public function destroy(Student $student)
+    public function destroy(Student $student): RedirectResponse
     {
         $student->delete();
 
         return redirect()->route('students.index')->with('success', 'Data siswa berhasil dihapus.');
     }
 
-    protected function validateStudent(Request $request, ?Student $student = null): array
-    {
-        return $request->validate([
-            'parent_id' => 'nullable|exists:parents,id',
-            'kelas_id' => 'nullable|exists:kelas,id',
-            'academic_year_id' => 'nullable|exists:academic_years,id',
-            'nis' => ['required', 'string', 'max:30', Rule::unique('students', 'nis')->ignore($student?->id)],
-            'nik' => ['nullable', 'string', 'max:16', Rule::unique('students', 'nik')->ignore($student?->id)],
-            'nama_lengkap' => 'required|string|max:100',
-            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-            'tempat_lahir' => 'nullable|string|max:50',
-            'tanggal_lahir' => 'nullable|date',
-            'agama' => 'nullable|string|max:20',
-            'alamat' => 'nullable|string',
-            'status_siswa' => 'required|in:ACTIVE,INACTIVE,TRANSFERRED,GRADUATED',
-        ]);
-    }
-
     // API Methods
     public function apiIndex(Request $request): JsonResponse
     {
-        $students = Student::with(['guardian', 'kelas', 'academicYear'])->latest()->get();
+        $students = $this->studentQueryService->listForIndex();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Data siswa berhasil diambil',
-            'data' => $students
-        ]);
+        return $this->successJson('Data siswa berhasil diambil', $students);
     }
 
     public function apiShow(Request $request, $id): JsonResponse
     {
-        $student = Student::with(['guardian', 'kelas', 'academicYear'])->find($id);
+        $student = $this->studentQueryService->findForShow($id);
 
-        if (!$student) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Siswa tidak ditemukan',
-                'data' => null
-            ], 404);
+        if (! $student) {
+            return $this->errorJson('Siswa tidak ditemukan', 404);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Data siswa berhasil diambil',
-            'data' => $student
-        ]);
+        return $this->successJson('Data siswa berhasil diambil', $student);
     }
 }

@@ -4,6 +4,7 @@
 <div class="page-card p-4 p-lg-5">
     @include('parent._portal_styles')
     @include('parent._portal_header')
+    @include('parent._portal_quick_nav')
 
     @php($documentSummary = $latestPpdb?->portalDocumentSummary())
     @php($uploadedDocuments = $latestPpdb?->berkas ?? [])

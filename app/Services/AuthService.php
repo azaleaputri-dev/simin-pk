@@ -6,6 +6,7 @@ use App\Models\Guardian;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -13,23 +14,27 @@ class AuthService
 {
     public function registerGuardian(array $data): User
     {
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+        return DB::transaction(function () use ($data) {
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+            ]);
 
-        Guardian::create([
-            'user_id' => $user->id,
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'phone' => $data['phone'],
-            'address' => $data['address'] ?? '-',
-            'father_name' => $data['name'],
-            'mother_name' => $data['name'],
-        ]);
+            $guardian = Guardian::create([
+                'user_id' => $user->id,
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'phone' => $data['phone'],
+                'address' => $data['address'] ?? '-',
+                'father_name' => $data['name'],
+                'mother_name' => $data['name'],
+            ]);
 
-        return $user;
+            $user->setRelation('guardian', $guardian);
+
+            return $user;
+        });
     }
 
     public function attemptWeb(array $credentials, bool $remember = false): bool
@@ -45,13 +50,21 @@ class AuthService
             ]);
         }
 
-        return Auth::user();
+        return Auth::user()?->loadMissing('guardian');
     }
 
     public function login(User $user, Request $request): void
     {
         Auth::login($user);
         $request->session()->regenerate();
+    }
+
+    public function logout(Request $request): void
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
     }
 
     public function createApiToken(User $user, string $tokenName = 'auth-token'): string
@@ -70,5 +83,10 @@ class AuthService
         $user->update([
             'password' => Hash::make($newPassword),
         ]);
+    }
+
+    public function redirectRouteFor(User $user): string
+    {
+        return $user->redirectRoute();
     }
 }

@@ -1,4 +1,4 @@
-<div class="col-lg-6">
+<div class="col-lg-6" id="profil-akun">
     <div class="border rounded-4 p-4 bg-white h-100">
         <div class="section-label mb-2">Profil Akun</div>
         <h3 class="h5">Perbarui data user</h3>

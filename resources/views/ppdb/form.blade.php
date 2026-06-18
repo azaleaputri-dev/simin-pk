@@ -1,5 +1,5 @@
 @csrf
-<div class="row g-3">
+<div class="row g-3" data-emsifa-region>
     <div class="col-md-6">
         <label class="form-label">Nama Lengkap</label>
         <input type="text" name="nama_lengkap" class="form-control @error('nama_lengkap') is-invalid @enderror" value="{{ old('nama_lengkap', $ppdb->nama_lengkap ?? '') }}" required>
@@ -64,25 +64,60 @@
         <input type="text" name="dusun" class="form-control @error('dusun') is-invalid @enderror" value="{{ old('dusun', $ppdb->dusun ?? '') }}">
         @error('dusun') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
-    <div class="col-md-2">
-        <label class="form-label">Kelurahan</label>
-        <input type="text" name="kelurahan" class="form-control @error('kelurahan') is-invalid @enderror" value="{{ old('kelurahan', $ppdb->kelurahan ?? '') }}" required>
-        @error('kelurahan') <div class="invalid-feedback">{{ $message }}</div> @enderror
+    <div class="col-md-3">
+        <label class="form-label">Provinsi</label>
+        <select
+            name="provinsi"
+            class="form-select @error('provinsi') is-invalid @enderror"
+            data-emsifa-level="province"
+            data-current="{{ old('provinsi', $ppdb->provinsi ?? '') }}"
+            required
+        >
+            <option value="">Pilih Provinsi</option>
+        </select>
+        @error('provinsi') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
-    <div class="col-md-2">
-        <label class="form-label">Kecamatan</label>
-        <input type="text" name="kecamatan" class="form-control @error('kecamatan') is-invalid @enderror" value="{{ old('kecamatan', $ppdb->kecamatan ?? '') }}" required>
-        @error('kecamatan') <div class="invalid-feedback">{{ $message }}</div> @enderror
-    </div>
-    <div class="col-md-2">
-        <label class="form-label">Kabupaten</label>
-        <input type="text" name="kabupaten" class="form-control @error('kabupaten') is-invalid @enderror" value="{{ old('kabupaten', $ppdb->kabupaten ?? '') }}" required>
+    <div class="col-md-3">
+        <label class="form-label">Kabupaten / Kota</label>
+        <select
+            name="kabupaten"
+            class="form-select @error('kabupaten') is-invalid @enderror"
+            data-emsifa-level="regency"
+            data-current="{{ old('kabupaten', $ppdb->kabupaten ?? '') }}"
+            required
+            disabled
+        >
+            <option value="">Pilih Kabupaten / Kota</option>
+        </select>
         @error('kabupaten') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
-    <div class="col-md-6">
-        <label class="form-label">Provinsi</label>
-        <input type="text" name="provinsi" class="form-control @error('provinsi') is-invalid @enderror" value="{{ old('provinsi', $ppdb->provinsi ?? '') }}" required>
-        @error('provinsi') <div class="invalid-feedback">{{ $message }}</div> @enderror
+    <div class="col-md-3">
+        <label class="form-label">Kecamatan</label>
+        <select
+            name="kecamatan"
+            class="form-select @error('kecamatan') is-invalid @enderror"
+            data-emsifa-level="district"
+            data-current="{{ old('kecamatan', $ppdb->kecamatan ?? '') }}"
+            required
+            disabled
+        >
+            <option value="">Pilih Kecamatan</option>
+        </select>
+        @error('kecamatan') <div class="invalid-feedback">{{ $message }}</div> @enderror
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Kelurahan</label>
+        <select
+            name="kelurahan"
+            class="form-select @error('kelurahan') is-invalid @enderror"
+            data-emsifa-level="village"
+            data-current="{{ old('kelurahan', $ppdb->kelurahan ?? '') }}"
+            required
+            disabled
+        >
+            <option value="">Pilih Kelurahan</option>
+        </select>
+        @error('kelurahan') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
     <div class="col-md-6">
         <label class="form-label">Kode Pos</label>
@@ -174,3 +209,5 @@
     <button type="submit" class="btn btn-primary">{{ $submitLabel }}</button>
     <a href="{{ $backUrl ?? route('ppdb.index') }}" class="btn btn-outline-secondary">{{ $backLabel ?? 'Kembali' }}</a>
 </div>
+
+@include('components.forms._emsifa_region_script')

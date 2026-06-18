@@ -2,77 +2,53 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Parent\StoreParentRequest;
+use App\Http\Requests\Parent\UpdateParentRequest;
 use App\Models\Guardian;
-use Illuminate\Http\Request;
+use App\Services\ParentDataService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class ParentController extends Controller
 {
-    public function index()
+    public function __construct(protected ParentDataService $parentDataService)
+    {
+    }
+
+    public function index(): View
     {
         $parents = Guardian::withCount('students')->latest()->get();
 
         return view('parents.index', compact('parents'));
     }
 
-    public function create()
+    public function create(): View
     {
         return view('parents.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreParentRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'email' => 'required|email|max:100|unique:parents,email',
-            'phone' => 'required|string|max:20|unique:parents,phone',
-            'address' => 'required|string',
-        ]);
-
-        Guardian::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'],
-            'address' => $validated['address'],
-            'father_name' => $validated['name'],
-            'mother_name' => $validated['name'],
-        ]);
+        Guardian::create($this->parentDataService->normalize($request->validated()));
 
         return redirect()->route('parents.index')->with('success', 'Data orang tua berhasil ditambahkan.');
     }
 
-    public function edit($id)
+    public function edit(Guardian $parent): View
     {
-        $parent = Guardian::findOrFail($id);
-
         return view('parents.edit', compact('parent'));
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateParentRequest $request, Guardian $parent): RedirectResponse
     {
-        $parent = Guardian::findOrFail($id);
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'email' => 'required|email|max:100|unique:parents,email,' . $parent->id,
-            'phone' => 'required|string|max:20|unique:parents,phone,' . $parent->id,
-            'address' => 'required|string',
-        ]);
-
-        $parent->update([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'phone' => $validated['phone'],
-            'address' => $validated['address'],
-            'father_name' => $validated['name'],
-            'mother_name' => $validated['name'],
-        ]);
+        $parent->update($this->parentDataService->normalize($request->validated()));
 
         return redirect()->route('parents.index')->with('success', 'Data orang tua berhasil diperbarui.');
     }
 
-    public function destroy($id)
+    public function destroy(Guardian $parent): RedirectResponse
     {
-        Guardian::findOrFail($id)->delete();
+        $parent->delete();
 
         return redirect()->route('parents.index')->with('success', 'Data orang tua berhasil dihapus.');
     }

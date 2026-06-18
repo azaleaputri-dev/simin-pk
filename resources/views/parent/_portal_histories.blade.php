@@ -1,12 +1,12 @@
-<div class="col-12">
-    <div class="border rounded-4 p-4 bg-white">
+<div class="col-12" id="riwayat-portal">
+    <div class="surface-card">
         <div class="section-label mb-2">Riwayat PPDB</div>
         <h3 class="h5">Status Pendaftaran Saya</h3>
-        <div class="mt-3">
+        <div class="dashboard-stack mt-3">
             @forelse($ppdbs as $ppdb)
                 @php($progress = $ppdb->portalProgress())
                 @php($statusAppearance = $ppdb->statusAppearance())
-                <div class="border rounded-3 p-3 mb-3">
+                <div class="list-surface-item">
                     <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
                         <div>
                             <div class="fw-semibold">{{ $ppdb->nama_lengkap }}</div>
@@ -33,12 +33,12 @@
 </div>
 
 <div class="col-lg-6">
-    <div class="border rounded-4 p-4 bg-white h-100">
+    <div class="surface-card h-100">
         <div class="section-label mb-2">Data Anak</div>
         <h3 class="h5">Anak yang Terhubung</h3>
-        <div class="mt-3">
+        <div class="dashboard-stack mt-3">
             @forelse($students as $student)
-                <div class="border rounded-3 p-3 mb-3">
+                <div class="list-surface-item">
                     <div class="fw-semibold">{{ $student->nama_lengkap }}</div>
                     <div class="small text-muted">NIS {{ $student->nis }} | {{ $student->kelas?->name ?? 'Belum ditempatkan ke kelas' }}</div>
                     <div class="small text-muted">{{ $student->academicYear?->name ?? 'Belum ada tahun ajaran' }} | {{ $student->status_siswa }}</div>
@@ -51,12 +51,12 @@
 </div>
 
 <div class="col-lg-6">
-    <div class="border rounded-4 p-4 bg-white h-100">
+    <div class="surface-card h-100">
         <div class="section-label mb-2">Tagihan Aktif</div>
         <h3 class="h5">Invoice Orang Tua/User</h3>
-        <div class="mt-3">
+        <div class="dashboard-stack mt-3">
             @forelse($invoices as $invoice)
-                <div class="border rounded-3 p-3 mb-3">
+                <div class="list-surface-item">
                     <div class="d-flex justify-content-between gap-3">
                         <div>
                             <div class="fw-semibold">{{ $invoice->invoice_number }}</div>
@@ -75,7 +75,7 @@
 </div>
 
 <div class="col-12">
-    <div class="border rounded-4 p-4 bg-white">
+    <div class="surface-card">
         <div class="section-label mb-2">Riwayat Pembayaran</div>
         <div class="table-responsive">
             <table class="table align-middle mb-0">

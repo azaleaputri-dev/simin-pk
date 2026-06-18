@@ -1,5 +1,5 @@
 @csrf
-<div class="row g-3">
+<div class="row g-3" data-emsifa-region>
     <div class="col-md-8">
         <label class="form-label">Nama Sekolah</label>
         <input type="text" name="nama_sekolah" class="form-control @error('nama_sekolah') is-invalid @enderror" value="{{ old('nama_sekolah', $profilSekolah->nama_sekolah ?? '') }}" required>
@@ -16,16 +16,39 @@
         @error('alamat') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
     <div class="col-md-4">
-        <label class="form-label">Kecamatan</label>
-        <input type="text" name="kecamatan" class="form-control" value="{{ old('kecamatan', $profilSekolah->kecamatan ?? '') }}">
-    </div>
-    <div class="col-md-4">
-        <label class="form-label">Kabupaten</label>
-        <input type="text" name="kabupaten" class="form-control" value="{{ old('kabupaten', $profilSekolah->kabupaten ?? '') }}">
-    </div>
-    <div class="col-md-4">
         <label class="form-label">Provinsi</label>
-        <input type="text" name="provinsi" class="form-control" value="{{ old('provinsi', $profilSekolah->provinsi ?? '') }}">
+        <select
+            name="provinsi"
+            class="form-select"
+            data-emsifa-level="province"
+            data-current="{{ old('provinsi', $profilSekolah->provinsi ?? '') }}"
+        >
+            <option value="">Pilih Provinsi</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Kabupaten / Kota</label>
+        <select
+            name="kabupaten"
+            class="form-select"
+            data-emsifa-level="regency"
+            data-current="{{ old('kabupaten', $profilSekolah->kabupaten ?? '') }}"
+            disabled
+        >
+            <option value="">Pilih Kabupaten / Kota</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Kecamatan</label>
+        <select
+            name="kecamatan"
+            class="form-select"
+            data-emsifa-level="district"
+            data-current="{{ old('kecamatan', $profilSekolah->kecamatan ?? '') }}"
+            disabled
+        >
+            <option value="">Pilih Kecamatan</option>
+        </select>
     </div>
     <div class="col-md-3">
         <label class="form-label">Kode Pos</label>
@@ -90,3 +113,5 @@
     <button type="submit" class="btn btn-primary">{{ $submitLabel }}</button>
     <a href="{{ route('profil-sekolahs.index') }}" class="btn btn-outline-secondary">Kembali</a>
 </div>
+
+@include('components.forms._emsifa_region_script')
