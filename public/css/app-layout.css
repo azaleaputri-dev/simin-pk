@@ -426,6 +426,70 @@ body {
     margin-top: 1rem;
 }
 
+.finance-panel-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 1.25rem;
+}
+
+.finance-panel-copy {
+    min-width: 0;
+}
+
+.finance-panel-total {
+    min-width: 0;
+    text-align: right;
+}
+
+.finance-panel-total-value {
+    color: #198754;
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1.05;
+    white-space: nowrap;
+}
+
+.finance-mini-card {
+    height: 100%;
+    min-width: 0;
+    padding: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(18, 52, 59, 0.1);
+    border-radius: 1rem;
+    text-align: center;
+}
+
+.finance-mini-value {
+    max-width: 100%;
+    font-size: clamp(1.5rem, 2.2vw, 2rem);
+    font-weight: 800;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+}
+
+.finance-mini-currency {
+    font-size: clamp(1.25rem, 1.8vw, 1.75rem);
+}
+
+@media (max-width: 575.98px) {
+    .finance-panel-heading {
+        grid-template-columns: 1fr;
+    }
+
+    .finance-panel-total {
+        text-align: left;
+    }
+
+    .finance-mini-card {
+        padding: 0.85rem 0.55rem;
+    }
+
+    .finance-mini-currency {
+        font-size: clamp(1rem, 5vw, 1.35rem);
+    }
+}
+
 .mini-progress {
     height: 0.85rem;
     border-radius: 999px;

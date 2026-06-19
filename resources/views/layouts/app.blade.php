@@ -6,7 +6,7 @@
     <title>{{ $title ?? 'SIMIN-PK' }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="{{ asset('css/app-layout.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/app-layout.css') }}?v={{ filemtime(public_path('css/app-layout.css')) }}" rel="stylesheet">
 </head>
 <body>
     @php($loggedInUser = auth()->user())
@@ -345,6 +345,30 @@
                     input.files = event.dataTransfer.files;
                     displayFile(input.files[0]);
                 });
+            });
+
+            document.querySelectorAll('[data-payment-method]').forEach(function (methodSelect) {
+                var form = methodSelect.closest('form');
+                var proofSection = form ? form.querySelector('[data-payment-proof-section]') : null;
+                var proofInput = form ? form.querySelector('[data-payment-proof-input]') : null;
+
+                if (!proofSection || !proofInput) {
+                    return;
+                }
+
+                function syncPaymentProof() {
+                    var requiresProof = methodSelect.value === 'TRANSFER_BANK';
+                    proofSection.classList.toggle('d-none', !requiresProof);
+                    proofInput.required = requiresProof;
+
+                    if (!requiresProof) {
+                        proofInput.value = '';
+                        proofInput.dispatchEvent(new Event('change'));
+                    }
+                }
+
+                methodSelect.addEventListener('change', syncPaymentProof);
+                syncPaymentProof();
             });
         })();
     </script>

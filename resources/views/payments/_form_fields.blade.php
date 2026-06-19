@@ -25,7 +25,7 @@
     </div>
     <div class="col-md-4">
         <label class="form-label">Metode</label>
-        <select name="payment_method" class="form-select @error('payment_method') is-invalid @enderror" required>
+        <select name="payment_method" class="form-select @error('payment_method') is-invalid @enderror" data-payment-method required>
             <option value="{{ \App\Models\Payment::METHOD_TRANSFER_BANK }}" @selected(old('payment_method') === \App\Models\Payment::METHOD_TRANSFER_BANK)>Transfer Bank</option>
             <option value="{{ \App\Models\Payment::METHOD_CASH }}" @selected(old('payment_method') === \App\Models\Payment::METHOD_CASH)>Tunai</option>
         </select>
@@ -35,7 +35,7 @@
         <label class="form-label">Nama Pengirim</label>
         <input type="text" name="sender_name" class="form-control" value="{{ old('sender_name') }}">
     </div>
-    <div class="col-12">
+    <div class="col-12" data-payment-proof-section>
         <label class="form-label">Bukti Pembayaran</label>
         <label class="file-upload-zone @error('proof_file') is-invalid @enderror" data-file-upload>
             <input
@@ -44,6 +44,7 @@
                 class="file-upload-input"
                 accept=".jpg,.jpeg,.png,.webp,.pdf"
                 data-file-input
+                data-payment-proof-input
             >
             <span class="file-upload-preview" data-file-preview>
                 <i class="bi bi-cloud-arrow-up file-upload-icon"></i>

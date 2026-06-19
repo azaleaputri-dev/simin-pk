@@ -46,6 +46,7 @@ class PaymentSubmissionService
             'payment_method' => $data['payment_method'],
             'sender_name' => $data['sender_name'] ?? null,
             'proof_reference' => $data['proof_reference'] ?? null,
+            'status' => Payment::STATUS_PENDING,
             'notes' => $data['notes'] ?? null,
         ]);
     }

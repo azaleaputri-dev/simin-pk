@@ -7,6 +7,7 @@ use App\Http\Requests\Payment\ApiUploadProofRequest;
 use App\Http\Requests\Payment\RejectPaymentRequest;
 use App\Http\Requests\Payment\StorePaymentRequest;
 use App\Models\Payment;
+use App\Models\ProfilSekolah;
 use App\Services\FinanceFormOptionsService;
 use App\Services\NumberGeneratorService;
 use App\Services\PaymentApprovalService;
@@ -20,6 +21,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Illuminate\View\View;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Symfony\Component\HttpFoundation\Response;
 
 class PaymentController extends Controller
 {
@@ -76,6 +79,22 @@ class PaymentController extends Controller
         abort_unless($payment->proof_reference && Storage::disk('private')->exists($payment->proof_reference), 404);
 
         return response()->file(Storage::disk('private')->path($payment->proof_reference));
+    }
+
+    public function receipt(Payment $payment): Response
+    {
+        $payment = $payment->load([
+            'invoice.student.guardian',
+            'invoice.guardian',
+            'invoice.academicYear',
+            'invoice.items.feeType',
+        ]);
+        $schoolProfile = ProfilSekolah::latest('id')->first();
+        $filename = 'nota-' . str_replace(['/', '\\'], '-', $payment->payment_number) . '.pdf';
+
+        return Pdf::loadView('payments.receipt-pdf', compact('payment', 'schoolProfile'))
+            ->setPaper('a5', 'portrait')
+            ->download($filename);
     }
 
     public function approve(Request $request, Payment $payment): RedirectResponse

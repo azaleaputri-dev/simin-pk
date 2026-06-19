@@ -55,6 +55,9 @@
                         <td><span class="badge {{ $appearance['class'] }}">{{ $appearance['label'] }}</span></td>
                         <td class="text-end">
                             <a href="{{ route('payments.show', $payment) }}" class="btn btn-sm btn-outline-primary">Detail</a>
+                            <a href="{{ route('payments.receipt', $payment) }}" class="btn btn-sm btn-outline-dark">
+                                <i class="bi bi-file-earmark-pdf me-1"></i>Nota PDF
+                            </a>
                             @if($payment->status === 'PENDING')
                                 <a href="{{ route('payments.show', $payment) }}" class="btn btn-sm btn-outline-success">Verifikasi</a>
                             @endif

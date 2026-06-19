@@ -73,6 +73,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::resource('invoices', InvoiceController::class);
     Route::resource('payments', PaymentController::class)->only(['index', 'create', 'store', 'show']);
     Route::get('payments/{payment}/proof', [PaymentController::class, 'proof'])->name('payments.proof');
+    Route::get('payments/{payment}/nota', [PaymentController::class, 'receipt'])->name('payments.receipt');
     Route::post('payments/{payment}/approve', [PaymentController::class, 'approve'])->name('payments.approve');
     Route::post('payments/{payment}/reject', [PaymentController::class, 'reject'])->name('payments.reject');
 });

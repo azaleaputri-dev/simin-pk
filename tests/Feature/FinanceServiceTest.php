@@ -73,6 +73,40 @@ class FinanceServiceTest extends TestCase
         ]);
     }
 
+    public function test_payment_receipt_can_be_downloaded_as_pdf()
+    {
+        [$student, $feeType] = $this->financeFixture();
+
+        $invoice = app(InvoiceManagementService::class)->createSingleItemInvoice([
+            'student_id' => $student->id,
+            'academic_year_id' => $student->academic_year_id,
+            'invoice_date' => '2026-06-18',
+            'due_date' => '2026-06-30',
+            'fee_type_id' => $feeType->id,
+            'tariff_id' => null,
+            'description' => 'SPP Juni',
+            'amount' => 250000,
+            'notes' => null,
+        ]);
+
+        $payment = app(PaymentSubmissionService::class)->submit([
+            'invoice_id' => $invoice->id,
+            'payment_date' => '2026-06-18',
+            'amount' => 250000,
+            'payment_method' => Payment::METHOD_CASH,
+            'sender_name' => 'Orang Tua Demo',
+            'proof_reference' => null,
+            'notes' => 'Pembayaran tunai',
+        ]);
+
+        $admin = User::factory()->create();
+        $response = $this->actingAs($admin)->get(route('payments.receipt', $payment));
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringStartsWith('%PDF', $response->getContent());
+    }
+
     private function financeFixture(): array
     {
         $user = User::factory()->create();
