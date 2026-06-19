@@ -1,4 +1,4 @@
-<div class="dashboard-hero mb-4">
+<div class="dashboard-hero @isset($banner) dashboard-hero-banner @endisset mb-4">
     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3">
         <div>
             @isset($eyebrow)

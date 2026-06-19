@@ -1,10 +1,19 @@
 @extends('layouts.app')
 
 @section('content')
+@php($activeYear = \App\Models\AcademicYear::getActive())
 <div class="page-card p-4">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
         <div>
-            <div class="section-label">Modul PPDB</div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <div class="section-label">Modul PPDB</div>
+                @if($activeYear)
+                    <span class="badge {{ $activeYear->ppdbStatusBadge()['class'] }}">
+                        <i class="bi {{ $activeYear->isPpdbOpen() ? 'bi-unlock-fill' : 'bi-lock-fill' }} me-1"></i>
+                        {{ $activeYear->ppdbStatusBadge()['label'] }}
+                    </span>
+                @endif
+            </div>
             <h1 class="h3 mb-1">Daftar Pendaftar</h1>
             <p class="text-muted mb-0">Status diterima akan otomatis menyiapkan akun orang tua dan data siswa.</p>
         </div>

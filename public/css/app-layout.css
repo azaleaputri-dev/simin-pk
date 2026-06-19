@@ -8,9 +8,10 @@
 
 body {
     background:
-        radial-gradient(circle at top left, rgba(226, 166, 75, 0.14), transparent 24%),
-        radial-gradient(circle at top right, rgba(31, 122, 140, 0.08), transparent 35%),
-        linear-gradient(180deg, #fcf8f1 0%, #f3ecdf 100%);
+        radial-gradient(circle at top left, rgba(226, 166, 75, 0.16), transparent 28%),
+        radial-gradient(circle at top right, rgba(31, 122, 140, 0.1), transparent 38%),
+        radial-gradient(circle at bottom left, rgba(226, 166, 75, 0.06), transparent 30%),
+        linear-gradient(180deg, #fdf9f2 0%, #f5ede0 100%);
     color: var(--simin-ink);
     min-height: 100vh;
 }
@@ -544,9 +545,71 @@ body {
     border-color: var(--simin-accent);
 }
 
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background: #166b7a !important;
+    border-color: #166b7a !important;
+}
+
 .btn-outline-primary {
     color: var(--simin-accent);
     border-color: var(--simin-accent);
+}
+
+.btn-outline-primary:hover {
+    background: var(--simin-accent);
+    border-color: var(--simin-accent);
+    color: #fff;
+}
+
+.btn-warning {
+    background: var(--simin-gold);
+    border-color: var(--simin-gold);
+    color: #12343b;
+}
+
+.btn-warning:hover {
+    background: #d6993a;
+    border-color: #d6993a;
+    color: #12343b;
+}
+
+.dashboard-hero-banner {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(1.2rem, 2vw, 2rem) clamp(1.2rem, 3vw, 2.5rem);
+    border-radius: 1.6rem;
+    background:
+        linear-gradient(rgba(13, 49, 57, 0.82), rgba(24, 84, 96, 0.78)),
+        radial-gradient(circle at top right, rgba(255,255,255,0.12), transparent 24%),
+        linear-gradient(135deg, #0f3941 0%, #206b79 55%, #5ba9b9 100%);
+    color: #fff;
+    box-shadow: 0 24px 52px rgba(15, 57, 65, 0.18);
+}
+
+.dashboard-hero-banner .section-label {
+    color: rgba(255,255,255,0.78);
+}
+
+.dashboard-hero-banner .dashboard-title {
+    color: #fff;
+}
+
+.dashboard-hero-banner .dashboard-subtitle {
+    color: rgba(255,255,255,0.84) !important;
+}
+
+.dashboard-hero-banner .dashboard-hero-meta .section-label {
+    color: rgba(255,255,255,0.65);
+}
+
+.dashboard-hero-banner .dashboard-hero-meta .text-muted {
+    color: rgba(255,255,255,0.72) !important;
+}
+
+.dashboard-hero-banner .dashboard-hero-meta .fs-5 {
+    color: #fff;
 }
 
 @media (max-width: 991.98px) {

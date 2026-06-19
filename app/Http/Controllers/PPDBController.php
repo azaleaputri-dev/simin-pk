@@ -8,6 +8,7 @@ use App\Http\Requests\PPDB\PublicPpdbRequest;
 use App\Http\Requests\PPDB\PortalDocumentUploadRequest;
 use App\Http\Requests\PPDB\StoreAdminPpdbRequest;
 use App\Http\Requests\PPDB\UpdateAdminPpdbRequest;
+use App\Models\AcademicYear;
 use App\Models\PPDB;
 use App\Services\PpdbDocumentService;
 use App\Services\PpdbPortalService;
@@ -32,6 +33,10 @@ class PPDBController extends Controller
 
     public function register(): View
     {
+        if ($redirect = $this->checkPpdbClosed()) {
+            return $redirect;
+        }
+
         $draftPpdb = $this->portalService->draftFor(request()->user());
 
         return view('ppdb.register', compact('draftPpdb'));
@@ -39,6 +44,10 @@ class PPDBController extends Controller
 
     public function submit(PublicPpdbRequest $request): RedirectResponse
     {
+        if ($redirect = $this->checkPpdbClosed()) {
+            return $redirect;
+        }
+
         $this->createPublicPpdb($request);
 
         return redirect()->route($this->portalService->submitRedirectRoute($request->user()))
@@ -143,6 +152,10 @@ class PPDBController extends Controller
 
     public function apiRegister(PublicPpdbRequest $request): JsonResponse
     {
+        if ($this->checkPpdbClosed()) {
+            return $this->errorJson('Maaf, pendaftaran PPDB sedang ditutup.', 403);
+        }
+
         $ppdb = $this->createPublicPpdb($request);
 
         return $this->successJson('Pendaftaran PPDB berhasil dikirim', $ppdb);
@@ -150,6 +163,10 @@ class PPDBController extends Controller
 
     public function apiSubmit(PublicPpdbRequest $request): JsonResponse
     {
+        if ($this->checkPpdbClosed()) {
+            return $this->errorJson('Maaf, pendaftaran PPDB sedang ditutup.', 403);
+        }
+
         $ppdb = $this->createPublicPpdb($request);
 
         return $this->successJson('Pendaftaran PPDB berhasil disubmit', $ppdb);
@@ -172,6 +189,23 @@ class PPDBController extends Controller
             'Dokumen berhasil diupload',
             $this->documentService->storeApiDocument($request->file('file'))
         );
+    }
+
+    protected function checkPpdbClosed(): ?RedirectResponse
+    {
+        $activeYear = AcademicYear::getActive();
+
+        if (!$activeYear || !$activeYear->isPpdbOpen()) {
+            return redirect()->route('home')
+                ->with('error', 'Maaf, pendaftaran PPDB sedang ditutup. Silakan hubungi admin sekolah untuk informasi lebih lanjut.');
+        }
+
+        if (!$activeYear->isPpdbWithinPeriod()) {
+            return redirect()->route('home')
+                ->with('error', 'Maaf, pendaftaran PPDB sudah diluar periode yang ditentukan.');
+        }
+
+        return null;
     }
 
     protected function createPublicPpdb(PublicPpdbRequest $request): PPDB

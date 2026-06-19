@@ -53,6 +53,8 @@ Route::delete('/portal-orangtua/ppdb/{ppdb}/documents/{documentType}', [PPDBCont
 
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::post('/dashboard/ppdb-toggle', [DashboardController::class, 'togglePpdb'])->name('admin.ppdb.toggle');
+    Route::post('/dashboard/ppdb-period', [DashboardController::class, 'updatePpdbPeriod'])->name('admin.ppdb.period');
     Route::resource('profil-sekolahs', ProfilSekolahController::class);
     Route::resource('ppdb', PPDBController::class)->except(['create', 'store']);
     Route::get('ppdb/create', [PPDBController::class, 'create'])->name('ppdb.create');

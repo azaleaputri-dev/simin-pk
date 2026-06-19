@@ -3,17 +3,19 @@
 @section('content')
 <div class="page-card p-4 p-lg-5">
     @include('components.dashboard._hero', [
+        'banner' => true,
         'eyebrow' => 'Portal Admin',
         'title' => 'Dashboard Operasional Sekolah',
         'description' => 'Area admin untuk mengelola master data, PPDB, siswa, kelas, invoice, dan verifikasi pembayaran.',
         'meta' => [
-            ['label' => 'Mode Akses', 'value' => 'Admin Sekolah', 'muted' => true],
+            ['label' => 'Mode Akses', 'value' => 'Admin Sekolah'],
             ['label' => 'Tahun Ajaran Aktif', 'value' => $activeAcademicYear?->name ?? 'Belum ditentukan'],
         ],
     ])
 
     @include('dashboard._stats')
     @include('dashboard._quick_actions')
+    @include('dashboard._ppdb_settings')
 
     <div class="dashboard-tabbar reveal-on-load mb-4" role="tablist" aria-label="Mode dashboard admin">
         <button type="button" class="dashboard-tab is-active" data-dashboard-tab="overview">Overview</button>

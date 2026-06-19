@@ -45,6 +45,43 @@ class DashboardController extends Controller
         return view('dashboard.index', compact('activeAcademicYear', 'stats', 'recentApplicants'));
     }
 
+    public function togglePpdb(Request $request): RedirectResponse
+    {
+        $activeYear = AcademicYear::getActive();
+
+        if (!$activeYear) {
+            return redirect()->route('admin.dashboard')
+                ->with('error', 'Tidak ada tahun ajaran aktif. Atur tahun ajaran terlebih dahulu.');
+        }
+
+        $activeYear->update(['ppdb_is_open' => !$activeYear->ppdb_is_open]);
+
+        $status = $activeYear->ppdb_is_open ? 'dibuka' : 'ditutup';
+
+        return redirect()->route('admin.dashboard')
+            ->with('success', "PPDB berhasil {$status} untuk tahun ajaran {$activeYear->name}.");
+    }
+
+    public function updatePpdbPeriod(Request $request): RedirectResponse
+    {
+        $activeYear = AcademicYear::getActive();
+
+        if (!$activeYear) {
+            return redirect()->route('admin.dashboard')
+                ->with('error', 'Tidak ada tahun ajaran aktif.');
+        }
+
+        $validated = $request->validate([
+            'ppdb_start_date' => 'nullable|date',
+            'ppdb_end_date' => 'nullable|date|after_or_equal:ppdb_start_date',
+        ]);
+
+        $activeYear->update($validated);
+
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'Periode PPDB berhasil diperbarui.');
+    }
+
     // API Methods for Announcements
     public function apiAnnouncements(Request $request): JsonResponse
     {
