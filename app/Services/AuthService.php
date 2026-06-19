@@ -89,4 +89,40 @@ class AuthService
     {
         return $user->redirectRoute();
     }
+
+    public function findOrCreateGoogleUser(array $googleUser): User
+    {
+        $existing = User::where('email', $googleUser['email'])->first();
+
+        if ($existing) {
+            if (!$existing->google_id) {
+                $existing->update(['google_id' => $googleUser['id'], 'avatar' => $googleUser['avatar']]);
+            }
+            return $existing;
+        }
+
+        return DB::transaction(function () use ($googleUser) {
+            $user = User::create([
+                'name' => $googleUser['name'],
+                'email' => $googleUser['email'],
+                'google_id' => $googleUser['id'],
+                'avatar' => $googleUser['avatar'],
+                'password' => '',
+            ]);
+
+            Guardian::create([
+                'user_id' => $user->id,
+                'name' => $googleUser['name'],
+                'email' => $googleUser['email'],
+                'phone' => '-',
+                'address' => '-',
+                'father_name' => $googleUser['name'],
+                'mother_name' => $googleUser['name'],
+            ]);
+
+            $user->setRelation('guardian', $user->guardian);
+
+            return $user;
+        });
+    }
 }

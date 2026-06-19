@@ -353,10 +353,15 @@ body {
 }
 
 .contact-banner {
-    padding: 1.8rem;
-    border-radius: 1.8rem;
+    padding: 4.5rem clamp(1.5rem, 5vw, 5rem);
+    border-radius: 0;
     background: linear-gradient(135deg, #103941 0%, #1e6876 100%);
     box-shadow: 0 24px 52px rgba(16, 57, 65, 0.18);
+}
+
+.contact-section {
+    padding-top: 0.75rem;
+    padding-bottom: 0;
 }
 
 .contact-list {

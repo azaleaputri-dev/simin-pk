@@ -16,6 +16,27 @@
         "postcss": "^8.1.14"
     },
     "dependencies": {
+        "express": "^5.2.1",
+        "google-auth-library": "^10.7.0",
         "webpack": "^5.74.0"
-    }
+    },
+    "name": "simin-pk",
+    "version": "1.0.0",
+    "description": "<p align=\"center\"><a href=\"https://laravel.com\" target=\"_blank\"><img src=\"https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg\" width=\"400\"></a></p>",
+    "main": "webpack.mix.js",
+    "directories": {
+        "test": "tests"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/azaleaputri-dev/simin-pk.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/azaleaputri-dev/simin-pk/issues"
+    },
+    "homepage": "https://github.com/azaleaputri-dev/simin-pk#readme"
 }

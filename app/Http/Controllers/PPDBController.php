@@ -31,7 +31,7 @@ class PPDBController extends Controller
     ) {
     }
 
-    public function register(): View
+    public function register(): View|RedirectResponse
     {
         if ($redirect = $this->checkPpdbClosed()) {
             return $redirect;

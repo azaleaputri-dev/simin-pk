@@ -249,7 +249,7 @@
         </section>
 
         <section class="section-block contact-section" id="kontak">
-            <div class="container">
+            <div class="container-fluid px-0">
                 <div class="contact-banner">
                     <div class="row g-4 align-items-center">
                         <div class="col-lg-8">
