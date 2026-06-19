@@ -7,7 +7,7 @@
     ];
 @endphp
 
-<div class="surface-card reveal-on-load">
+<div class="surface-card reveal-on-load card-tone-teal-light">
     <div class="section-label mb-2">Panel Akademik</div>
     <h3 class="h5 mb-1">Ringkasan performa PPDB dan siswa</h3>
     <p class="text-muted mb-0">Visual singkat ini bantu admin membaca beban kerja akademik hari ini.</p>

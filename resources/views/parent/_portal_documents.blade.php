@@ -1,5 +1,5 @@
 <div class="col-12">
-    <div class="surface-card">
+    <div class="surface-card card-tone-coral-light">
         <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
             <div>
                 <div class="section-label mb-2">Berkas PPDB</div>
@@ -107,7 +107,23 @@
                                     @csrf
                                     <input type="hidden" name="document_type" value="{{ $docKey }}">
                                     <div class="mb-3">
-                                        <input type="file" name="file" class="form-control @error('file') is-invalid @enderror" accept=".jpg,.jpeg,.png,.pdf" required>
+                                        <label class="file-upload-zone file-upload-zone-compact @error('file') is-invalid @enderror" data-file-upload>
+                                            <input
+                                                type="file"
+                                                name="file"
+                                                class="file-upload-input"
+                                                accept=".jpg,.jpeg,.png,.webp,.pdf"
+                                                data-file-input
+                                                required
+                                            >
+                                            <span class="file-upload-preview" data-file-preview>
+                                                <i class="bi bi-cloud-arrow-up file-upload-icon"></i>
+                                            </span>
+                                            <span class="file-upload-content">
+                                                <span class="file-upload-title" data-file-title>{{ $document ? 'Pilih file pengganti' : 'Pilih ' . $docLabel }}</span>
+                                                <span class="file-upload-help">JPG, PNG, WEBP, atau PDF • Maks. 5 MB</span>
+                                            </span>
+                                        </label>
                                         @error('file') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                     </div>
                                     <button type="submit" class="btn btn-outline-primary btn-sm">{{ $document ? 'Ganti' : 'Upload' }} {{ $docLabel }}</button>

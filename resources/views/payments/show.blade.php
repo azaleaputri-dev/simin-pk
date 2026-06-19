@@ -12,6 +12,9 @@
         'TUNAI' => 'Tunai',
         default => $payment->payment_method,
     };
+    $proofName = $payment->proof_reference ? basename($payment->proof_reference) : null;
+    $proofExtension = $proofName ? strtolower(pathinfo($proofName, PATHINFO_EXTENSION)) : null;
+    $proofIsImage = in_array($proofExtension, ['jpg', 'jpeg', 'png', 'webp'], true);
 @endphp
 
 @section('content')
@@ -60,9 +63,21 @@
                     </div>
                 @endif
                 @if($payment->proof_reference)
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted small">Bukti</span>
-                        <span class="fw-semibold">{{ $payment->proof_reference }}</span>
+                    <div class="mt-3">
+                        <div class="text-muted small mb-2">Bukti Pembayaran</div>
+                        @if($proofIsImage)
+                            <a href="{{ route('payments.proof', $payment) }}" target="_blank">
+                                <img src="{{ route('payments.proof', $payment) }}" alt="Bukti pembayaran" class="payment-proof-preview">
+                            </a>
+                        @else
+                            <div class="file-preview-card">
+                                <i class="bi bi-file-earmark-pdf fs-3 text-danger"></i>
+                                <span class="small text-truncate">{{ $proofName }}</span>
+                            </div>
+                        @endif
+                        <a href="{{ route('payments.proof', $payment) }}" target="_blank" class="btn btn-sm btn-outline-primary mt-2">
+                            <i class="bi bi-eye me-1"></i>Lihat Bukti
+                        </a>
                     </div>
                 @endif
                 @if($payment->notes)

@@ -1,4 +1,4 @@
-<div class="surface-card mb-4 reveal-on-load">
+<div class="surface-card mb-4 reveal-on-load card-tone-sand">
     <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-3">
         <div>
             <div class="section-label mb-2">Pengaturan PPDB</div>

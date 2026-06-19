@@ -32,60 +32,50 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    public function googleLogin(Request $request): JsonResponse|RedirectResponse
+    public function loginWithGoogle(Request $request): RedirectResponse
     {
-        $idToken = trim((string) $request->input('id_token'));
+        $credential = $request->validate([
+            'credential' => ['required', 'string'],
+        ])['credential'];
 
-        if ($idToken === '') {
-            return $this->googleError('ID token tidak ditemukan.');
+        try {
+            $response = Http::acceptJson()
+                ->timeout(10)
+                ->get('https://oauth2.googleapis.com/tokeninfo', [
+                    'id_token' => $credential,
+                ]);
+        } catch (\Throwable $exception) {
+            return back()->with('error', 'Google tidak dapat dihubungi. Silakan coba lagi.');
         }
 
-        $response = Http::get('https://oauth2.googleapis.com/tokeninfo', [
-            'id_token' => $idToken,
-        ]);
+        $googleUser = $response->json();
+        $validIssuer = in_array($googleUser['iss'] ?? null, [
+            'accounts.google.com',
+            'https://accounts.google.com',
+        ], true);
 
-        if ($response->failed() || ! empty($response->json('error_description'))) {
-            return $this->googleError('Token Google tidak valid atau gagal diverifikasi.');
-        }
-
-        $payload = $response->json();
-
-        $clientId = config('services.google.client_id');
-        $audience = trim((string) ($payload['aud'] ?? ''));
-        $authorizedParty = trim((string) ($payload['azp'] ?? ''));
-
-        if (! in_array($clientId, [$audience, $authorizedParty], true)) {
-            return $this->googleError('Client Google tidak cocok.');
-        }
-
-        $email = strtolower(trim((string) ($payload['email'] ?? '')));
-        if ($email === '') {
-            return $this->googleError('Email Google tidak ditemukan.');
+        if (
+            ! $response->successful()
+            || ($googleUser['aud'] ?? null) !== config('services.google.client_id')
+            || ! $validIssuer
+            || ! in_array($googleUser['email_verified'] ?? null, [true, 'true', 1, '1'], true)
+            || (int) ($googleUser['exp'] ?? 0) <= now()->timestamp
+            || empty($googleUser['sub'])
+            || empty($googleUser['email'])
+        ) {
+            return back()->with('error', 'Identitas Google tidak valid atau sudah kedaluwarsa.');
         }
 
         $user = $this->authService->findOrCreateGoogleUser([
-            'id' => (string) ($payload['sub'] ?? ''),
-            'name' => (string) ($payload['name'] ?? ''),
-            'email' => $email,
-            'avatar' => (string) ($payload['picture'] ?? ''),
+            'id' => $googleUser['sub'],
+            'name' => $googleUser['name'] ?? $googleUser['email'],
+            'email' => $googleUser['email'],
+            'avatar' => $googleUser['picture'] ?? null,
         ]);
 
         $this->authService->login($user, $request);
 
-        if ($request->wantsJson()) {
-            return $this->successJson('Login Google berhasil', [
-                'user' => $user,
-                'redirect' => route($this->authService->redirectRouteFor($user)),
-            ]);
-        }
-
         return $this->redirectAfterLogin($request);
-    }
-
-    protected function googleError(string $message): RedirectResponse
-    {
-        return redirect()->route('login')
-            ->with('error', $message . ' Silakan coba lagi.');
     }
 
     public function register(RegisterRequest $request): RedirectResponse

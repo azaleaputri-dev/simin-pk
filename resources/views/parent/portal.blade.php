@@ -12,8 +12,9 @@
     <div class="row g-4">
         @include('parent._portal_journey')
         @include('parent._portal_account')
-        @include('parent._portal_documents')
-        @include('parent._portal_profile_forms')
+        @if($latestPpdb)
+            @include('parent._portal_documents')
+        @endif
         @include('parent._portal_histories')
     </div>
 </div>

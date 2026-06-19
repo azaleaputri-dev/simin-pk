@@ -38,7 +38,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
 
-    Route::post('/auth/google', [AuthController::class, 'googleLogin'])->name('auth.google');
+    Route::post('/auth/google', [AuthController::class, 'loginWithGoogle'])->name('auth.google');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
@@ -48,7 +48,10 @@ Route::get('/dashboard', function () {
 })->middleware('auth');
 
 Route::get('/portal-orangtua', [ParentPortalController::class, 'index'])->middleware('auth')->name('parent.portal');
+Route::get('/portal-orangtua/riwayat-ppdb', [ParentPortalController::class, 'ppdbHistory'])->middleware('auth')->name('parent.portal.ppdb.history');
+Route::get('/portal-orangtua/profil', [ParentPortalController::class, 'profile'])->middleware('auth')->name('parent.portal.profile');
 Route::put('/portal-orangtua/profil', [ParentPortalController::class, 'updateProfile'])->middleware('auth')->name('parent.portal.profile.update');
+Route::get('/portal-orangtua/password', [ParentPortalController::class, 'password'])->middleware('auth')->name('parent.portal.password');
 Route::put('/portal-orangtua/password', [ParentPortalController::class, 'updatePassword'])->middleware('auth')->name('parent.portal.password.update');
 Route::post('/portal-orangtua/ppdb/{ppdb}/documents', [PPDBController::class, 'uploadPortalDocument'])->middleware('auth')->name('parent.portal.ppdb.documents.store');
 Route::delete('/portal-orangtua/ppdb/{ppdb}/documents/{documentType}', [PPDBController::class, 'destroyPortalDocument'])->middleware('auth')->name('parent.portal.ppdb.documents.destroy');
@@ -69,6 +72,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::resource('tariffs', TariffController::class)->except(['show']);
     Route::resource('invoices', InvoiceController::class);
     Route::resource('payments', PaymentController::class)->only(['index', 'create', 'store', 'show']);
+    Route::get('payments/{payment}/proof', [PaymentController::class, 'proof'])->name('payments.proof');
     Route::post('payments/{payment}/approve', [PaymentController::class, 'approve'])->name('payments.approve');
     Route::post('payments/{payment}/reject', [PaymentController::class, 'reject'])->name('payments.reject');
 });

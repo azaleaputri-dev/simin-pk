@@ -1,5 +1,5 @@
 <div class="col-12" id="ringkasan-akun">
-    <div class="surface-card">
+    <div class="surface-card card-tone-sand">
         <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
             <div>
                 <div class="section-label mb-2">Akun Portal</div>

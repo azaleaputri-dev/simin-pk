@@ -21,6 +21,7 @@ class StorePaymentRequest extends FormRequest
             'payment_method' => 'required|in:' . implode(',', Payment::METHODS),
             'sender_name' => 'nullable|string|max:100',
             'proof_reference' => 'nullable|string|max:255',
+            'proof_file' => ['nullable', 'file', 'max:5120', 'mimes:jpg,jpeg,png,webp,pdf'],
             'notes' => 'nullable|string',
         ];
     }

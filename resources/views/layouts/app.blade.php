@@ -41,7 +41,7 @@
                     <div class="sidebar-group">
                         <div class="sidebar-label">Navigasi User</div>
                         <div class="sidebar-links">
-                            <a href="{{ route('parent.portal') }}" class="sidebar-link {{ request()->routeIs('parent.portal') ? 'is-active' : '' }}">
+                            <a href="{{ route('parent.portal') }}" class="sidebar-link {{ request()->routeIs('parent.portal*') ? 'is-active' : '' }}">
                                 <span class="sidebar-link-icon"><i class="bi bi-grid-1x2-fill"></i></span>
                                 <span>Portal Orang Tua</span>
                             </a>
@@ -276,6 +276,74 @@
                     if (appLayout) {
                         appLayout.classList.remove('sidebar-open');
                     }
+                });
+            });
+
+            document.querySelectorAll('[data-file-upload]').forEach(function (zone) {
+                var input = zone.querySelector('[data-file-input]');
+                var title = zone.querySelector('[data-file-title]');
+                var preview = zone.querySelector('[data-file-preview]');
+
+                if (!input || !title || !preview) {
+                    return;
+                }
+
+                var defaultTitle = title.textContent;
+                var defaultPreview = preview.innerHTML;
+                var objectUrl = null;
+
+                function displayFile(file) {
+                    if (objectUrl) {
+                        URL.revokeObjectURL(objectUrl);
+                        objectUrl = null;
+                    }
+
+                    if (!file) {
+                        title.textContent = defaultTitle;
+                        preview.innerHTML = defaultPreview;
+                        return;
+                    }
+
+                    title.textContent = file.name + ' • ' + (file.size / 1024 / 1024).toFixed(2) + ' MB';
+
+                    if (file.type && file.type.startsWith('image/')) {
+                        objectUrl = URL.createObjectURL(file);
+                        preview.innerHTML = '';
+                        var image = document.createElement('img');
+                        image.src = objectUrl;
+                        image.alt = 'Preview file';
+                        preview.appendChild(image);
+                        return;
+                    }
+
+                    preview.innerHTML = '<i class="bi bi-file-earmark-check file-upload-icon"></i>';
+                }
+
+                input.addEventListener('change', function () {
+                    displayFile(input.files && input.files[0]);
+                });
+
+                ['dragenter', 'dragover'].forEach(function (eventName) {
+                    zone.addEventListener(eventName, function (event) {
+                        event.preventDefault();
+                        zone.classList.add('is-dragging');
+                    });
+                });
+
+                ['dragleave', 'drop'].forEach(function (eventName) {
+                    zone.addEventListener(eventName, function (event) {
+                        event.preventDefault();
+                        zone.classList.remove('is-dragging');
+                    });
+                });
+
+                zone.addEventListener('drop', function (event) {
+                    if (!event.dataTransfer || !event.dataTransfer.files.length) {
+                        return;
+                    }
+
+                    input.files = event.dataTransfer.files;
+                    displayFile(input.files[0]);
                 });
             });
         })();

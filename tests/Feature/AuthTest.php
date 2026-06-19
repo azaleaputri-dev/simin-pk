@@ -136,7 +136,7 @@ class AuthTest extends TestCase
             'address' => 'Alamat Baru',
         ]);
 
-        $response->assertRedirect('/portal-orangtua');
+        $response->assertRedirect('/portal-orangtua/profil');
         $this->assertDatabaseHas('users', ['id' => $user->id, 'name' => 'Nama Baru', 'email' => 'baru@example.com']);
         $this->assertDatabaseHas('parents', ['user_id' => $user->id, 'name' => 'Nama Baru', 'email' => 'baru@example.com', 'phone' => '081200001111']);
     }
@@ -163,7 +163,7 @@ class AuthTest extends TestCase
             'password_confirmation' => 'Password999',
         ]);
 
-        $response->assertRedirect('/portal-orangtua');
+        $response->assertRedirect('/portal-orangtua/password');
         $this->assertTrue(password_verify('Password999', $user->fresh()->password));
     }
 

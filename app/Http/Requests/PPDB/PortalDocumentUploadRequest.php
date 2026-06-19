@@ -16,7 +16,7 @@ class PortalDocumentUploadRequest extends FormRequest
     {
         return [
             'document_type' => ['required', 'in:' . implode(',', PpdbDocumentService::DOCUMENT_TYPES)],
-            'file' => ['required', 'file', 'max:5120', 'mimes:jpg,jpeg,png,pdf'],
+            'file' => ['required', 'file', 'max:5120', 'mimes:jpg,jpeg,png,webp,pdf'],
         ];
     }
 }

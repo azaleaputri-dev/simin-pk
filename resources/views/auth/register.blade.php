@@ -165,22 +165,7 @@
                                     <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">atau</span>
                                 </div>
 
-                                <div id="g_id_onload"
-                                    data-client_id="{{ config('services.google.client_id') }}"
-                                    data-context="signup"
-                                    data-ux_mode="popup"
-                                    data-callback="handleGoogleCredential"
-                                    data-auto_prompt="false">
-                                </div>
-                                <div class="g_id_signin w-100 d-flex justify-content-center"
-                                    data-type="standard"
-                                    data-shape="rectangular"
-                                    data-theme="outline"
-                                    data-text="continue_with"
-                                    data-size="large"
-                                    data-width="400"
-                                    data-logo_alignment="left">
-                                </div>
+                                @include('auth._google_identity', ['googleButtonText' => 'signup_with'])
                             </div>
                         </div>
                     </div>
@@ -189,33 +174,6 @@
         </section>
     </main>
 
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script>
-        function handleGoogleCredential(response) {
-            if (!response.credential) {
-                return;
-            }
-
-            var form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '{{ route('auth.google') }}';
-
-            var csrf = document.createElement('input');
-            csrf.type = 'hidden';
-            csrf.name = '_token';
-            csrf.value = '{{ csrf_token() }}';
-            form.appendChild(csrf);
-
-            var token = document.createElement('input');
-            token.type = 'hidden';
-            token.name = 'id_token';
-            token.value = response.credential;
-            form.appendChild(token);
-
-            document.body.appendChild(form);
-            form.submit();
-        }
-    </script>
     <script>
         document.querySelectorAll('[data-password-target]').forEach(function (button) {
             button.addEventListener('click', function () {

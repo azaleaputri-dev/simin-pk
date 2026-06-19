@@ -35,9 +35,26 @@
         <label class="form-label">Nama Pengirim</label>
         <input type="text" name="sender_name" class="form-control" value="{{ old('sender_name') }}">
     </div>
-    <div class="col-md-6">
+    <div class="col-12">
         <label class="form-label">Bukti Pembayaran</label>
-        <input type="text" name="proof_reference" class="form-control" value="{{ old('proof_reference') }}" placeholder="contoh: bukti-transfer-001.jpg">
+        <label class="file-upload-zone @error('proof_file') is-invalid @enderror" data-file-upload>
+            <input
+                type="file"
+                name="proof_file"
+                class="file-upload-input"
+                accept=".jpg,.jpeg,.png,.webp,.pdf"
+                data-file-input
+            >
+            <span class="file-upload-preview" data-file-preview>
+                <i class="bi bi-cloud-arrow-up file-upload-icon"></i>
+            </span>
+            <span class="file-upload-content">
+                <span class="file-upload-title" data-file-title>Pilih foto atau dokumen bukti pembayaran</span>
+                <span class="file-upload-help">Klik untuk memilih file • JPG, PNG, WEBP, atau PDF • Maksimal 5 MB</span>
+            </span>
+            <span class="btn btn-outline-primary btn-sm">Pilih File</span>
+        </label>
+        @error('proof_file') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
     </div>
     <div class="col-12">
         <label class="form-label">Catatan</label>

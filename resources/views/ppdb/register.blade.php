@@ -50,9 +50,17 @@
         .flow-card {
             border: 1px solid rgba(24, 53, 59, 0.08);
             border-radius: 1.25rem;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 242, 233, 0.98) 100%);
             padding: 1.1rem;
             height: 100%;
+        }
+        .flow-card:nth-child(1) {
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(31, 122, 140, 0.07) 100%);
+        }
+        .flow-card:nth-child(2) {
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(226, 166, 75, 0.07) 100%);
+        }
+        .flow-card:nth-child(3) {
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(246, 242, 234, 0.9) 100%);
         }
 
         .flow-step-badge {
@@ -65,7 +73,15 @@
             font-size: 0.9rem;
             font-weight: 700;
             color: #fff;
-            background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand) 100%);
+        }
+        .flow-card:nth-child(1) .flow-step-badge {
+            background: linear-gradient(135deg, #12343b 0%, #1e6c7d 100%);
+        }
+        .flow-card:nth-child(2) .flow-step-badge {
+            background: linear-gradient(135deg, #b8860b 0%, #e2a64b 100%);
+        }
+        .flow-card:nth-child(3) .flow-step-badge {
+            background: linear-gradient(135deg, #6b5d4b 0%, #a09080 100%);
         }
 
         .benefit-list {
@@ -78,6 +94,36 @@
             background: rgba(24, 53, 59, 0.05);
             border: 1px solid rgba(24, 53, 59, 0.06);
             padding: 0.9rem 1rem;
+        }
+        .benefit-item:first-child {
+            background: rgba(31, 122, 140, 0.06);
+            border-color: rgba(31, 122, 140, 0.12);
+        }
+        .benefit-item:last-child {
+            background: rgba(226, 166, 75, 0.06);
+            border-color: rgba(226, 166, 75, 0.12);
+        }
+
+        .form-section-header {
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 1rem;
+        }
+        .form-section-header.siswa {
+            background: rgba(31, 122, 140, 0.1);
+            color: #1e6c7d;
+        }
+        .form-section-header.orangtua {
+            background: rgba(226, 166, 75, 0.12);
+            color: #b8860b;
+        }
+        .form-section-header.ppdb {
+            background: rgba(180, 165, 140, 0.15);
+            color: #6b5d4b;
         }
     </style>
 </head>

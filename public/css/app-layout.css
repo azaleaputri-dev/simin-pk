@@ -507,6 +507,128 @@ body {
     color: var(--simin-ink);
 }
 
+.chip-link.is-active {
+    color: #fff;
+    border-color: var(--simin-accent);
+    background: var(--simin-accent);
+    box-shadow: 0 8px 18px rgba(31, 122, 140, 0.2);
+}
+
+.file-upload-zone {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    min-height: 130px;
+    padding: 1.1rem;
+    border: 2px dashed rgba(31, 122, 140, 0.3);
+    border-radius: 1rem;
+    background: rgba(240, 250, 252, 0.65);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.file-upload-zone:hover,
+.file-upload-zone.is-dragging {
+    border-color: var(--simin-accent);
+    background: rgba(226, 242, 245, 0.95);
+    box-shadow: 0 0 0 0.25rem rgba(31, 122, 140, 0.1);
+}
+
+.file-upload-zone.is-invalid {
+    border-color: var(--bs-danger);
+}
+
+.file-upload-zone-compact {
+    min-height: 104px;
+    padding: 0.85rem;
+}
+
+.file-upload-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.file-upload-preview {
+    width: 72px;
+    height: 72px;
+    flex: 0 0 72px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 0.85rem;
+    background: #fff;
+    color: var(--simin-accent);
+    border: 1px solid rgba(31, 122, 140, 0.14);
+}
+
+.file-upload-zone-compact .file-upload-preview {
+    width: 56px;
+    height: 56px;
+    flex-basis: 56px;
+}
+
+.file-upload-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.file-upload-icon {
+    font-size: 1.8rem;
+}
+
+.file-upload-content {
+    min-width: 0;
+    flex: 1;
+    display: grid;
+    gap: 0.25rem;
+}
+
+.file-upload-title {
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.file-upload-help {
+    color: var(--bs-secondary-color);
+    font-size: 0.8rem;
+}
+
+.payment-proof-preview {
+    width: 100%;
+    max-height: 340px;
+    object-fit: contain;
+    border-radius: 1rem;
+    border: 1px solid rgba(18, 52, 59, 0.1);
+    background: #f8f9fa;
+}
+
+.file-preview-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(18, 52, 59, 0.1);
+    background: #f8f9fa;
+}
+
+@media (max-width: 575.98px) {
+    .file-upload-zone {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .file-upload-zone > .btn {
+        width: 100%;
+    }
+}
+
 .soft-pulse {
     animation: softPulse 2.4s ease-in-out infinite;
 }
@@ -639,6 +761,62 @@ body {
     .sidebar-close {
         display: none;
     }
+}
+
+/* ── Card tone accents ── */
+.card-tone-gold {
+    background: linear-gradient(180deg, #fffcf5 0%, #fffbee 100%);
+    border-color: #e2a64b;
+    box-shadow: 0 18px 40px rgba(226, 166, 75, 0.1), inset 0 3px 0 #e2a64b;
+}
+.card-tone-gold:hover {
+    border-color: #d4952e;
+    box-shadow: 0 20px 38px rgba(226, 166, 75, 0.15), inset 0 3px 0 #e2a64b;
+}
+.card-tone-sand {
+    background: linear-gradient(180deg, #fefcf8 0%, #f8f4ec 100%);
+    border-color: #c8b9a0;
+    box-shadow: 0 18px 40px rgba(200, 185, 160, 0.08), inset 0 3px 0 #c8b9a0;
+}
+.card-tone-sand:hover {
+    border-color: #b8a88a;
+    box-shadow: 0 20px 38px rgba(200, 185, 160, 0.12), inset 0 3px 0 #c8b9a0;
+}
+.card-tone-teal-light {
+    background: linear-gradient(180deg, #f6fbfc 0%, #ecf5f8 100%);
+    border-color: #1f7a8c;
+    box-shadow: 0 18px 40px rgba(31, 122, 140, 0.08), inset 0 3px 0 #1f7a8c;
+}
+.card-tone-teal-light:hover {
+    border-color: #166a7a;
+    box-shadow: 0 20px 38px rgba(31, 122, 140, 0.12), inset 0 3px 0 #1f7a8c;
+}
+.card-tone-coral-light {
+    background: linear-gradient(180deg, #fef8f7 0%, #fcf0ed 100%);
+    border-color: #dc645a;
+    box-shadow: 0 18px 40px rgba(220, 100, 90, 0.08), inset 0 3px 0 #dc645a;
+}
+.card-tone-coral-light:hover {
+    border-color: #cc4e44;
+    box-shadow: 0 20px 38px rgba(220, 100, 90, 0.12), inset 0 3px 0 #dc645a;
+}
+
+/* ── Stat card icon tones ── */
+.stat-tone-teal .stat-card-icon {
+    background: linear-gradient(135deg, rgba(31, 122, 140, 0.18) 0%, rgba(73, 163, 179, 0.28) 100%);
+    color: #1e6c7d;
+}
+.stat-tone-gold .stat-card-icon {
+    background: linear-gradient(135deg, rgba(226, 166, 75, 0.18) 0%, rgba(236, 186, 95, 0.28) 100%);
+    color: #b8860b;
+}
+.stat-tone-sand .stat-card-icon {
+    background: linear-gradient(135deg, rgba(180, 165, 140, 0.18) 0%, rgba(200, 185, 165, 0.28) 100%);
+    color: #8b7d6b;
+}
+.stat-tone-coral .stat-card-icon {
+    background: linear-gradient(135deg, rgba(220, 100, 90, 0.18) 0%, rgba(235, 130, 120, 0.28) 100%);
+    color: #b85040;
 }
 
 @media (prefers-reduced-motion: reduce) {

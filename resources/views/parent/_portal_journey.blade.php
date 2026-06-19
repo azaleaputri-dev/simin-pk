@@ -1,32 +1,32 @@
-<div class="col-12">
-    <div class="surface-card">
-        <div class="section-label mb-2">Progress PPDB</div>
-        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
-            <div>
-                <h3 class="h5 mb-1">Tahapan pendaftaran dari akun ini</h3>
-                <p class="text-muted mb-0">Pantau status dari aktivasi akun sampai keputusan akhir PPDB langsung dari portal user.</p>
-            </div>
-            <span class="badge text-bg-light px-3 py-2">{{ $portalJourney['status_label'] }}</span>
-        </div>
-        <div class="row g-3">
-            @foreach($portalJourney['steps'] as $index => $step)
-                @php($isComplete = in_array($step['key'], $portalJourney['completed'], true))
-                @php($isActive = $portalJourney['current'] === $step['key'])
-                <div class="col-md-6 col-xl-3">
-                    <div class="journey-step {{ $isActive ? 'is-active' : '' }} {{ $isComplete ? 'is-complete' : '' }}">
-                        <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="journey-badge">{{ $index + 1 }}</span>
-                            <div class="fw-semibold">{{ $step['label'] }}</div>
-                        </div>
-                        <div class="small text-muted">{{ $step['description'] }}</div>
-                    </div>
+@if($latestPpdb)
+    <div class="col-12">
+        <div class="surface-card card-tone-teal-light">
+            <div class="section-label mb-2">Progress PPDB</div>
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
+                <div>
+                    <h3 class="h5 mb-1">Tahapan pendaftaran dari akun ini</h3>
+                    <p class="text-muted mb-0">Pantau status dari aktivasi akun sampai keputusan akhir PPDB langsung dari portal user.</p>
                 </div>
-            @endforeach
+                <span class="badge text-bg-light px-3 py-2">{{ $portalJourney['status_label'] }}</span>
+            </div>
+            <div class="row g-3">
+                @foreach($portalJourney['steps'] as $index => $step)
+                    @php($isComplete = in_array($step['key'], $portalJourney['completed'], true))
+                    @php($isActive = $portalJourney['current'] === $step['key'])
+                    <div class="col-md-6 col-xl-3">
+                        <div class="journey-step {{ $isActive ? 'is-active' : '' }} {{ $isComplete ? 'is-complete' : '' }}">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span class="journey-badge">{{ $index + 1 }}</span>
+                                <div class="fw-semibold">{{ $step['label'] }}</div>
+                            </div>
+                            <div class="small text-muted">{{ $step['description'] }}</div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         </div>
     </div>
-</div>
 
-@if($latestPpdb)
     <div class="col-12">
         <div class="highlight-panel">
             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-3">

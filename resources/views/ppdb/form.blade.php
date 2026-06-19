@@ -1,5 +1,6 @@
 @csrf
 <div class="row g-3" data-emsifa-region>
+    <div class="col-12"><div class="form-section-header siswa"><i class="bi bi-person-vcard me-2"></i>Data Calon Siswa</div></div>
     <div class="col-md-6">
         <label class="form-label">Nama Lengkap</label>
         <input type="text" name="nama_lengkap" class="form-control @error('nama_lengkap') is-invalid @enderror" value="{{ old('nama_lengkap', $ppdb->nama_lengkap ?? '') }}" required>
@@ -125,7 +126,7 @@
         @error('kode_pos') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
 
-    <div class="col-12 pt-2"><div class="section-label">Data Orang Tua</div></div>
+    <div class="col-12 pt-3"><div class="form-section-header orangtua"><i class="bi bi-people me-2"></i>Data Orang Tua</div></div>
     <div class="col-md-4">
         <label class="form-label">Nama Orang Tua</label>
         <input type="text" name="nama_orang_tua" class="form-control @error('nama_orang_tua') is-invalid @enderror" value="{{ old('nama_orang_tua', $ppdb->nama_orang_tua ?? '') }}" required>
@@ -142,7 +143,7 @@
         @error('no_hp_orang_tua') <div class="invalid-feedback">{{ $message }}</div> @enderror
     </div>
 
-    <div class="col-12 pt-2"><div class="section-label">Data PPDB</div></div>
+    <div class="col-12 pt-3"><div class="form-section-header ppdb"><i class="bi bi-journal-check me-2"></i>Data PPDB</div></div>
     <div class="col-md-4">
         <label class="form-label">Asal Sekolah</label>
         <input type="text" name="asal_sekolah" class="form-control @error('asal_sekolah') is-invalid @enderror" value="{{ old('asal_sekolah', $ppdb->asal_sekolah ?? '') }}" required>

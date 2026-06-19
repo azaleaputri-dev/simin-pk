@@ -7,6 +7,7 @@ use App\Http\Requests\ParentPortal\UpdateProfileRequest;
 use App\Services\ParentPortalService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 
 class ParentPortalController extends Controller
 {
@@ -24,6 +25,42 @@ class ParentPortalController extends Controller
         }
 
         return view('parent.portal', $portalData);
+    }
+
+    public function profile(): View|RedirectResponse
+    {
+        $portalData = $this->portalService->buildFor(auth()->user());
+
+        if (! $portalData) {
+            return redirect()->route('admin.dashboard')
+                ->with('error', 'Akun ini tidak terhubung ke portal orang tua.');
+        }
+
+        return view('parent.profile', $portalData);
+    }
+
+    public function ppdbHistory(): View|RedirectResponse
+    {
+        $portalData = $this->portalService->buildFor(auth()->user());
+
+        if (! $portalData) {
+            return redirect()->route('admin.dashboard')
+                ->with('error', 'Akun ini tidak terhubung ke portal orang tua.');
+        }
+
+        return view('parent.ppdb-history', $portalData);
+    }
+
+    public function password(): View|RedirectResponse
+    {
+        $portalData = $this->portalService->buildFor(auth()->user());
+
+        if (! $portalData) {
+            return redirect()->route('admin.dashboard')
+                ->with('error', 'Akun ini tidak terhubung ke portal orang tua.');
+        }
+
+        return view('parent.password', $portalData);
     }
 
     public function updateProfile(UpdateProfileRequest $request): RedirectResponse
@@ -44,7 +81,7 @@ class ParentPortalController extends Controller
             'address' => $validated['address'],
         ]);
 
-        return redirect()->route('parent.portal')->with('success', 'Profil akun berhasil diperbarui.');
+        return redirect()->route('parent.portal.profile')->with('success', 'Profil akun berhasil diperbarui.');
     }
 
     public function updatePassword(UpdatePasswordRequest $request): RedirectResponse
@@ -63,6 +100,6 @@ class ParentPortalController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        return redirect()->route('parent.portal')->with('success', 'Password akun berhasil diperbarui.');
+        return redirect()->route('parent.portal.password')->with('success', 'Password akun berhasil diperbarui.');
     }
 }

@@ -5,7 +5,7 @@
     $collectionRate = (int) round(($totalRevenue / $totalExpected) * 100);
 @endphp
 
-<div class="surface-card reveal-on-load">
+<div class="surface-card reveal-on-load card-tone-coral-light">
     <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
         <div>
             <div class="section-label mb-2">Panel Keuangan</div>

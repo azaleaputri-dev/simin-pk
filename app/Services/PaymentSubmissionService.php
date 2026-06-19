@@ -28,9 +28,13 @@ class PaymentSubmissionService
             ]);
         }
 
-        if ($data['payment_method'] === Payment::METHOD_TRANSFER_BANK && empty($data['proof_reference'])) {
+        if (
+            $data['payment_method'] === Payment::METHOD_TRANSFER_BANK
+            && empty($data['proof_reference'])
+            && empty($data['proof_file'])
+        ) {
             throw ValidationException::withMessages([
-                'proof_reference' => 'Bukti transfer wajib untuk metode transfer.',
+                'proof_file' => 'Bukti transfer wajib diupload untuk metode transfer.',
             ]);
         }
 

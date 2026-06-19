@@ -16,7 +16,9 @@ use App\Services\PaymentSubmissionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Illuminate\View\View;
 
 class PaymentController extends Controller
@@ -50,7 +52,11 @@ class PaymentController extends Controller
     public function store(StorePaymentRequest $request): RedirectResponse
     {
         try {
-            $this->paymentSubmissionService->submit($request->validated());
+            $payment = $this->paymentSubmissionService->submit($request->validated());
+
+            if ($request->hasFile('proof_file')) {
+                $this->paymentControllerService->storeProof($payment, $request->file('proof_file'));
+            }
         } catch (ValidationException $exception) {
             return back()->with('error', $this->paymentControllerService->firstValidationMessage($exception))->withInput();
         }
@@ -63,6 +69,13 @@ class PaymentController extends Controller
         $payment = $this->paymentQueryService->loadForShow($payment);
 
         return view('payments.show', compact('payment'));
+    }
+
+    public function proof(Payment $payment): BinaryFileResponse
+    {
+        abort_unless($payment->proof_reference && Storage::disk('private')->exists($payment->proof_reference), 404);
+
+        return response()->file(Storage::disk('private')->path($payment->proof_reference));
     }
 
     public function approve(Request $request, Payment $payment): RedirectResponse
