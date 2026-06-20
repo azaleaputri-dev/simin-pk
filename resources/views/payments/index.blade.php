@@ -56,7 +56,10 @@
                         <td class="text-end">
                             <a href="{{ route('payments.show', $payment) }}" class="btn btn-sm btn-outline-primary">Detail</a>
                             <a href="{{ route('payments.receipt', $payment) }}" class="btn btn-sm btn-outline-dark">
-                                <i class="bi bi-file-earmark-pdf me-1"></i>Nota PDF
+                                <i class="bi bi-file-earmark-arrow-down me-1"></i>PDF
+                            </a>
+                            <a href="{{ route('payments.receipt.print', $payment) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-printer me-1"></i>Print
                             </a>
                             @if($payment->status === 'PENDING')
                                 <a href="{{ route('payments.show', $payment) }}" class="btn btn-sm btn-outline-success">Verifikasi</a>

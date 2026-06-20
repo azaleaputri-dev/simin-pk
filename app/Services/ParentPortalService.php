@@ -2,10 +2,13 @@
 
 namespace App\Services;
 
+use App\Models\Announcement;
 use App\Models\Guardian;
 use App\Models\Invoice;
+use App\Models\Notification;
 use App\Models\Payment;
 use App\Models\PPDB;
+use App\Models\ProfilSekolah;
 use App\Models\User;
 
 class ParentPortalService
@@ -43,6 +46,11 @@ class ParentPortalService
             ],
             'latestPpdb' => $latestPpdb,
             'portalJourney' => $latestPpdb?->portalProgress() ?? PPDB::emptyPortalJourney(),
+            'tasks' => $this->buildTasks($guardian, $students, $latestPpdb, $invoices, $payments),
+            'announcements' => Announcement::active()->orderByDesc('publish_date')->limit(5)->get(),
+            'notifications' => Notification::where('user_id', $user->id)->orderByDesc('created_at')->limit(10)->get(),
+            'unreadNotifications' => Notification::where('user_id', $user->id)->where('is_read', false)->count(),
+            'schoolProfile' => ProfilSekolah::first(),
         ];
     }
 
@@ -73,5 +81,62 @@ class ParentPortalService
             })
             ->latest()
             ->get();
+    }
+
+    protected function buildTasks(Guardian $guardian, $students, $latestPpdb, $invoices, $payments): array
+    {
+        $tasks = [];
+
+        if (! $latestPpdb || $latestPpdb->status_pendaftaran === 'draft') {
+            $tasks[] = [
+                'key' => 'isi_ppdb',
+                'label' => 'Isi PPDB',
+                'description' => $latestPpdb ? 'Lanjutkan data PPDB yang sudah diisi' : 'Belum ada pendaftaran PPDB',
+                'url' => route('ppdb.register'),
+                'urgency' => 'high',
+                'icon' => 'bi-journal-check',
+            ];
+        }
+
+        if ($latestPpdb && $latestPpdb->canManagePortalDocuments()) {
+            $summary = $latestPpdb->portalDocumentSummary();
+            if (! $summary['is_complete']) {
+                $tasks[] = [
+                    'key' => 'lengkapi_berkas',
+                    'label' => 'Lengkapi Berkas PPDB',
+                    'description' => $summary['remaining'] . ' dokumen masih kurang',
+                    'url' => route('parent.portal') . '#berkas-ppdb',
+                    'urgency' => 'high',
+                    'icon' => 'bi-file-earmark-plus',
+                ];
+            }
+        }
+
+        $pendingPayments = $payments->where('status', Payment::STATUS_PENDING);
+        if ($pendingPayments->isNotEmpty()) {
+            $tasks[] = [
+                'key' => 'verifikasi_pembayaran',
+                'label' => 'Menunggu Verifikasi Pembayaran',
+                'description' => $pendingPayments->count() . ' pembayaran sedang diproses admin',
+                'url' => route('parent.portal.payments'),
+                'urgency' => 'medium',
+                'icon' => 'bi-clock-history',
+            ];
+        }
+
+        $unpaidInvoices = $invoices->whereIn('status', Invoice::OPEN_STATUSES);
+        if ($unpaidInvoices->isNotEmpty() && $pendingPayments->isEmpty()) {
+            $overdueCount = $unpaidInvoices->filter(fn ($i) => $i->due_date && $i->due_date->isPast())->count();
+            $tasks[] = [
+                'key' => 'bayar_tagihan',
+                'label' => $overdueCount ? 'Tagihan Jatuh Tempo' : 'Bayar Tagihan',
+                'description' => $unpaidInvoices->count() . ' tagihan aktif, ' . $overdueCount . ' sudah jatuh tempo',
+                'url' => route('parent.portal.invoices'),
+                'urgency' => $overdueCount ? 'high' : 'medium',
+                'icon' => 'bi-cash-stack',
+            ];
+        }
+
+        return $tasks;
     }
 }

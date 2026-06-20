@@ -49,4 +49,11 @@ class Payment extends Model
     {
         return $this->status === self::STATUS_PENDING;
     }
+
+    public static function generateNumber(): string
+    {
+        $date = now()->format('Ymd');
+        $last = self::whereDate('created_at', today())->count();
+        return 'PAY-' . $date . '-' . str_pad($last + 1, 4, '0', STR_PAD_LEFT);
+    }
 }

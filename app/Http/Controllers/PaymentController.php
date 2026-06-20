@@ -83,18 +83,16 @@ class PaymentController extends Controller
 
     public function receipt(Payment $payment): Response
     {
-        $payment = $payment->load([
-            'invoice.student.guardian',
-            'invoice.guardian',
-            'invoice.academicYear',
-            'invoice.items.feeType',
-        ]);
-        $schoolProfile = ProfilSekolah::latest('id')->first();
         $filename = 'nota-' . str_replace(['/', '\\'], '-', $payment->payment_number) . '.pdf';
 
-        return Pdf::loadView('payments.receipt-pdf', compact('payment', 'schoolProfile'))
-            ->setPaper('a5', 'portrait')
-            ->download($filename);
+        return $this->makeReceiptPdf($payment)->download($filename);
+    }
+
+    public function printReceipt(Payment $payment): Response
+    {
+        $filename = 'nota-' . str_replace(['/', '\\'], '-', $payment->payment_number) . '.pdf';
+
+        return $this->makeReceiptPdf($payment)->stream($filename);
     }
 
     public function approve(Request $request, Payment $payment): RedirectResponse
@@ -187,5 +185,19 @@ class PaymentController extends Controller
         $payment = $this->paymentApprovalService->reject($payment, $validated['notes']);
 
         return $this->successJson('Pembayaran berhasil ditolak', $payment);
+    }
+
+    private function makeReceiptPdf(Payment $payment)
+    {
+        $payment = $payment->load([
+            'invoice.student.guardian',
+            'invoice.guardian',
+            'invoice.academicYear',
+            'invoice.items.feeType',
+        ]);
+        $schoolProfile = ProfilSekolah::latest('id')->first();
+
+        return Pdf::loadView('payments.receipt-pdf', compact('payment', 'schoolProfile'))
+            ->setPaper('a4', 'portrait');
     }
 }

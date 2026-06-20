@@ -38,7 +38,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
 
-    Route::post('/auth/google', [AuthController::class, 'loginWithGoogle'])->name('auth.google');
+    Route::post('/auth/google', [AuthController::class, 'googleLogin'])->name('auth.google');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
@@ -47,14 +47,26 @@ Route::get('/dashboard', function () {
     return redirect()->route(request()->user()->redirectRoute());
 })->middleware('auth');
 
-Route::get('/portal-orangtua', [ParentPortalController::class, 'index'])->middleware('auth')->name('parent.portal');
-Route::get('/portal-orangtua/riwayat-ppdb', [ParentPortalController::class, 'ppdbHistory'])->middleware('auth')->name('parent.portal.ppdb.history');
-Route::get('/portal-orangtua/profil', [ParentPortalController::class, 'profile'])->middleware('auth')->name('parent.portal.profile');
-Route::put('/portal-orangtua/profil', [ParentPortalController::class, 'updateProfile'])->middleware('auth')->name('parent.portal.profile.update');
-Route::get('/portal-orangtua/password', [ParentPortalController::class, 'password'])->middleware('auth')->name('parent.portal.password');
-Route::put('/portal-orangtua/password', [ParentPortalController::class, 'updatePassword'])->middleware('auth')->name('parent.portal.password.update');
-Route::post('/portal-orangtua/ppdb/{ppdb}/documents', [PPDBController::class, 'uploadPortalDocument'])->middleware('auth')->name('parent.portal.ppdb.documents.store');
-Route::delete('/portal-orangtua/ppdb/{ppdb}/documents/{documentType}', [PPDBController::class, 'destroyPortalDocument'])->middleware('auth')->name('parent.portal.ppdb.documents.destroy');
+Route::middleware('auth')->prefix('portal-orangtua')->group(function () {
+    Route::get('/', [ParentPortalController::class, 'index'])->name('parent.portal');
+    Route::get('/riwayat-ppdb', [ParentPortalController::class, 'ppdbHistory'])->name('parent.portal.ppdb.history');
+    Route::get('/profil', [ParentPortalController::class, 'profile'])->name('parent.portal.profile');
+    Route::put('/profil', [ParentPortalController::class, 'updateProfile'])->name('parent.portal.profile.update');
+    Route::get('/password', [ParentPortalController::class, 'password'])->name('parent.portal.password');
+    Route::put('/password', [ParentPortalController::class, 'updatePassword'])->name('parent.portal.password.update');
+    Route::get('/tagihan', [ParentPortalController::class, 'invoices'])->name('parent.portal.invoices');
+    Route::get('/tagihan/{invoice}', [ParentPortalController::class, 'invoiceDetail'])->name('parent.portal.invoices.detail');
+    Route::post('/tagihan/{invoice}/bayar', [ParentPortalController::class, 'submitPayment'])->name('parent.portal.invoices.pay');
+    Route::get('/pembayaran', [ParentPortalController::class, 'payments'])->name('parent.portal.payments');
+    Route::get('/pembayaran/{payment}/nota', [ParentPortalController::class, 'paymentReceipt'])->name('parent.portal.payments.receipt');
+    Route::get('/data-anak', [ParentPortalController::class, 'children'])->name('parent.portal.children');
+    Route::get('/pengumuman', [ParentPortalController::class, 'announcements'])->name('parent.portal.announcements');
+    Route::get('/kontak', [ParentPortalController::class, 'contact'])->name('parent.portal.contact');
+    Route::post('/kontak', [ParentPortalController::class, 'submitContact'])->name('parent.portal.contact.submit');
+    Route::post('/perbaikan-data', [ParentPortalController::class, 'submitCorrection'])->name('parent.portal.correction');
+    Route::post('/ppdb/{ppdb}/documents', [PPDBController::class, 'uploadPortalDocument'])->name('parent.portal.ppdb.documents.store');
+    Route::delete('/ppdb/{ppdb}/documents/{documentType}', [PPDBController::class, 'destroyPortalDocument'])->name('parent.portal.ppdb.documents.destroy');
+});
 
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
@@ -74,6 +86,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::resource('payments', PaymentController::class)->only(['index', 'create', 'store', 'show']);
     Route::get('payments/{payment}/proof', [PaymentController::class, 'proof'])->name('payments.proof');
     Route::get('payments/{payment}/nota', [PaymentController::class, 'receipt'])->name('payments.receipt');
+    Route::get('payments/{payment}/nota/print', [PaymentController::class, 'printReceipt'])->name('payments.receipt.print');
     Route::post('payments/{payment}/approve', [PaymentController::class, 'approve'])->name('payments.approve');
     Route::post('payments/{payment}/reject', [PaymentController::class, 'reject'])->name('payments.reject');
 });

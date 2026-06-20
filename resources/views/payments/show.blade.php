@@ -31,8 +31,11 @@
             <h1 class="h3 mb-1">{{ $payment->payment_number }}</h1>
             <p class="text-muted mb-0">Invoice: <a href="{{ route('invoices.show', $payment->invoice) }}" class="text-decoration-none">{{ $payment->invoice?->invoice_number }}</a></p>
         </div>
-        <div class="d-flex gap-2">
-            <a href="{{ route('payments.receipt', $payment) }}" class="btn btn-primary">
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{{ route('payments.receipt.print', $payment) }}" target="_blank" class="btn btn-primary">
+                <i class="bi bi-printer me-1"></i>Print Nota
+            </a>
+            <a href="{{ route('payments.receipt', $payment) }}" class="btn btn-outline-primary">
                 <i class="bi bi-file-earmark-pdf me-1"></i>Unduh Nota PDF
             </a>
             <a href="{{ route('payments.index') }}" class="btn btn-outline-secondary">Kembali ke Daftar</a>

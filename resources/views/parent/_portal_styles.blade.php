@@ -3,6 +3,44 @@
         min-width: 92px;
     }
 
+    .min-w-0 {
+        min-width: 0;
+    }
+
+    .parent-account-actions {
+        flex-shrink: 0;
+    }
+
+    #ringkasan-akun .list-surface-item {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+    }
+
+    .parent-account-icon,
+    .parent-list-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        flex: 0 0 2.5rem;
+        border-radius: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--simin-accent);
+        background: var(--simin-accent-soft);
+    }
+
+    .parent-list-icon {
+        width: 2.35rem;
+        height: 2.35rem;
+        flex-basis: 2.35rem;
+    }
+
+    .parent-payment-table th,
+    .parent-payment-table td {
+        white-space: nowrap;
+    }
+
     .journey-step {
         border: 1px solid rgba(18, 52, 59, 0.12);
         border-radius: 1rem;
@@ -132,5 +170,43 @@
         border: 1px solid rgba(31, 122, 140, 0.14);
         background: linear-gradient(180deg, rgba(240, 250, 252, 0.96) 0%, rgba(232, 245, 248, 0.96) 100%);
         padding: 1rem 1.1rem;
+    }
+
+    @media (max-width: 767.98px) {
+        .page-card {
+            padding: 1rem !important;
+        }
+
+        .floating-chip-nav {
+            margin-right: -1rem;
+            margin-left: -1rem;
+            padding-right: 1rem;
+            padding-left: 1rem;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .floating-chip-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .floating-chip-nav .chip-link {
+            flex: 0 0 auto;
+        }
+
+        .parent-stat-grid .stat-card {
+            height: 100%;
+            padding: 1rem;
+        }
+
+        .parent-stat-grid .stat-card strong {
+            font-size: clamp(1.1rem, 5vw, 1.5rem);
+            overflow-wrap: anywhere;
+        }
+
+        .parent-account-actions .btn {
+            flex: 1 1 100%;
+        }
     }
 </style>
